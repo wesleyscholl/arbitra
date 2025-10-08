@@ -1,0 +1,127 @@
+# Risk Management Configuration
+
+# Position Sizing Limits
+position_limits:
+  # Maximum position size as % of portfolio
+  max_position_pct: 2.0
+  
+  # Maximum portfolio at risk at any time
+  max_portfolio_risk_pct: 10.0
+  
+  # Stop loss percentage from entry
+  default_stop_loss_pct: 5.0
+  
+  # Kelly Criterion settings
+  kelly_fraction: 0.25  # Conservative 25% of full Kelly
+  min_win_rate: 0.51    # Minimum win rate to trade
+  min_trades_for_kelly: 20  # Min historical trades needed
+
+# Tier-Specific Limits
+tier_limits:
+  foundation:
+    max_position_pct: 5.0    # Max 5% per BTC/ETH/SOL trade
+    max_portfolio_pct: 60.0  # Max 60% in foundation tier
+    stop_loss_pct: 5.0
+    
+  growth:
+    max_position_pct: 3.0    # Max 3% per altcoin trade
+    max_portfolio_pct: 40.0  # Max 40% in growth tier
+    stop_loss_pct: 5.0
+    
+  opportunity:
+    max_position_pct: 1.0    # Max 1% per memecoin trade
+    max_portfolio_pct: 20.0  # Max 20% in memecoins
+    stop_loss_pct: 3.0       # Tighter stops for memes
+    max_hold_hours: 72       # NEVER hold memecoins >72 hours
+
+# Circuit Breakers
+circuit_breakers:
+  daily_loss:
+    enabled: true
+    threshold_pct: 5.0           # Stop if 5% daily loss
+    cooling_period_minutes: 120  # 2 hours
+    
+  weekly_loss:
+    enabled: true
+    threshold_pct: 10.0          # Stop if 10% weekly loss
+    cooling_period_minutes: 1440 # 24 hours
+    
+  drawdown:
+    enabled: true
+    threshold_pct: 15.0          # Stop if 15% drawdown from peak
+    cooling_period_minutes: 2880 # 48 hours
+    
+  volatility:
+    enabled: true
+    threshold: 100.0             # VIX equivalent >100
+    cooling_period_minutes: 60
+    
+  liquidity:
+    enabled: true
+    threshold_usd: 50000         # Minimum $50k liquidity
+    cooling_period_minutes: 30
+    
+  api_failure:
+    enabled: true
+    threshold_count: 3           # 3 consecutive failures
+    cooling_period_minutes: 15
+    
+  consecutive_losses:
+    enabled: true
+    threshold_count: 5           # 5 consecutive losses
+    cooling_period_minutes: 240  # 4 hours
+
+# Portfolio Allocation
+portfolio_allocation:
+  # Target allocation percentages
+  target_foundation_pct: 50.0
+  target_growth_pct: 30.0
+  target_opportunity_pct: 20.0
+  
+  # Rebalancing triggers
+  rebalance_threshold_pct: 5.0  # Rebalance if off by >5%
+  min_rebalance_interval_hours: 24
+  
+  # Minimum position size
+  min_position_usd: 50.0  # Don't trade <$50 positions
+
+# Memecoin-Specific Rules
+memecoin_rules:
+  # Safety checks (all must pass)
+  min_liquidity_usd: 100000    # Min $100k liquidity
+  max_liquidity_concentration_pct: 20.0  # Max 20% in single LP
+  check_honeypot: true
+  check_mint_function: true
+  check_ownership: true
+  max_ownership_concentration_pct: 10.0  # Max 10% in single wallet
+  
+  # Exit rules
+  max_hold_hours: 72           # HARD LIMIT: Never hold >72 hours
+  profit_take_levels:
+    - pct: 50    # Sell 50% at 2x
+      multiple: 2.0
+    - pct: 30    # Sell 30% at 5x
+      multiple: 5.0
+    - pct: 20    # Let 20% ride
+      multiple: null
+  
+  # Social signal thresholds
+  min_twitter_engagement_velocity: 100  # Engagements/hour
+  min_telegram_members: 1000
+  check_coordinated_pumps: true
+
+# Risk Monitoring
+monitoring:
+  # How often to check breakers
+  check_interval_seconds: 60
+  
+  # Alert thresholds
+  alert_daily_loss_pct: 3.0      # Alert at 3% daily loss
+  alert_position_size_pct: 1.5   # Alert if position >1.5%
+  alert_tier_allocation_pct: 55.0 # Alert if tier >55%
+  
+  # Performance tracking
+  track_sharpe_ratio: true
+  sharpe_min_threshold: 1.0      # Pause if Sharpe <1.0
+  track_win_rate: true
+  win_rate_min_threshold: 0.45   # Pause if win rate <45%

@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: docker.io/library/postgres:15-alpine
+    container_name: arbitra-postgres
+    environment:
+      POSTGRES_USER: arbitra
+      POSTGRES_PASSWORD: arbitra_dev_password
+      POSTGRES_DB: arbitra
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U arbitra"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: docker.io/library/redis:7-alpine
+    container_name: arbitra-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: Prometheus for metrics (can be disabled)
+  prometheus:
+    image: docker.io/prom/prometheus:latest
+    container_name: arbitra-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    profiles:
+      - monitoring
+
+  # Optional: Grafana for visualization (can be disabled)
+  grafana:
+    image: docker.io/grafana/grafana:latest
+    container_name: arbitra-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    profiles:
+      - monitoring
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+# Note: This compose file works with both podman-compose and docker-compose
+# To run: podman-compose up -d
+# To stop: podman-compose down
+# To include monitoring: podman-compose --profile monitoring up -d
