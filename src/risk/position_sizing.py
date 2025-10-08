@@ -256,9 +256,7 @@ def calculate_risk_reward_ratio(
     potential_profit = take_profit_price - entry_price
     potential_loss = entry_price - stop_loss_price
     
-    if potential_loss == 0:
-        return Decimal("0")
-    
+    # potential_loss is guaranteed to be > 0 due to validation above
     return potential_profit / potential_loss
 
 

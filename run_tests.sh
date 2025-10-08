@@ -28,6 +28,15 @@ if ! command -v pytest &> /dev/null; then
     exit 1
 fi
 
+# Ensure package is installed
+echo "Checking package installation..."
+if ! python -c "import src.risk" 2>/dev/null; then
+    echo -e "${YELLOW}Package not installed. Installing in editable mode...${NC}"
+    pip install -e . >/dev/null 2>&1
+    echo -e "${GREEN}✓ Package installed${NC}"
+fi
+echo ""
+
 echo "Running tests..."
 echo ""
 

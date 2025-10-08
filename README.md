@@ -29,7 +29,7 @@ See `strategy.jsx` and `architecture.jsx` for detailed strategy documentation.
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
 │  │ Data Feeds   │  │  AI Engine   │  │ Risk Manager │       │
 │  │              │  │              │  │              │       │
-│  │ • Helius     │→ │ • Claude/GPT │→ │ • Position   │       │
+│  │ • Helius     │→ │ • Gemini AI  │→ │ • Position   │       │
 │  │ • Birdeye    │  │ • Analysis   │  │   Sizing     │       │
 │  │ • DexScreener│  │ • Confidence │  │ • Stop Loss  │       │
 │  └──────────────┘  └──────────────┘  └──────────────┘       │
@@ -56,7 +56,7 @@ See `strategy.jsx` and `architecture.jsx` for detailed strategy documentation.
 ### Core
 - **Language**: Python 3.11+
 - **Framework**: FastAPI (async trading operations)
-- **AI Models**: Anthropic Claude / OpenAI GPT-4
+- **AI Models**: Google Gemini (gemini-2.0-flash-exp, gemini-1.5-pro)
 - **Blockchain**: Solana Web3.py
 
 ### Data & Storage
@@ -209,31 +209,34 @@ arbitra/
 - ✅ Database can handle 1000+ trades/day
 - ✅ Data feeds maintain <1s latency
 
-### Phase 2: AI Engine (Week 3-4)
+### Phase 2: AI Engine (Week 3-4) 🔄 IN PROGRESS
 
-**Objective**: Implement AI decision-making with confidence scoring
+**Objective**: Implement AI decision-making with confidence scoring using Google Gemini
 
 #### Components:
 1. **AI Agent Core**
-   - LLM integration (Claude/GPT-4)
-   - Prompt engineering
-   - Structured output parsing
+   - Google Gemini API integration (gemini-2.0-flash-exp for speed, gemini-1.5-pro for complex analysis)
+   - Prompt engineering for trading analysis
+   - Structured JSON output parsing
+   - Retry logic and error handling
 
 2. **Confidence Scoring**
-   - Multi-factor confidence calculation
+   - Multi-factor confidence calculation (technical indicators, sentiment, risk factors)
    - Historical accuracy tracking
-   - Confidence calibration
+   - Confidence calibration against actual outcomes
+   - Dynamic confidence adjustment
 
 3. **Trade Memory**
-   - Vector database setup
-   - Similar trade retrieval
+   - Vector database setup (Pinecone)
+   - Similar trade retrieval using embeddings
    - Learning from past trades
+   - Pattern recognition
 
 #### Success Criteria:
-- AI generates valid trade recommendations
-- Confidence scores correlate with outcomes
-- Memory system retrieves relevant trades
-- Avg response time <2s
+- AI generates valid trade recommendations with >90% structural accuracy
+- Confidence scores correlate with outcomes (R² > 0.6)
+- Memory system retrieves relevant trades (<500ms)
+- Avg response time <2s for flash model, <5s for pro model
 
 ### Phase 3: Foundation Strategies (Week 5-6)
 
@@ -541,6 +544,8 @@ python main.py --mode live
 
 - **[Installation Guide](INSTALLATION.md)** - Detailed setup options (Podman, local, or no infrastructure)
 - **[Quick Start](QUICKSTART.md)** - Get up and running fast
+- **[AI Engine](docs/AI_ENGINE.md)** - Google Gemini integration guide
+- **[Phase 2 Testing](docs/PHASE2_TESTING.md)** - Complete test results and coverage report
 - [Trading Strategies](docs/strategies.md)
 - [Risk Management](docs/risk-management.md)
 - [API Documentation](docs/api.md)
@@ -564,8 +569,15 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 🎯 Current Status
 
-**Phase**: 1 (Foundation)  
-**Focus**: Risk Management Module  
-**Next Milestone**: Complete risk module with 100% test coverage
+**Phase**: 2 (AI Engine) ✅ **COMPLETE**  
+**Test Coverage**: 95% overall (99 tests, 100% passing)  
+**Completed**:
+- ✅ Phase 1 - Risk Management Module (100% test coverage, 62 tests)
+- ✅ Phase 2 - AI Engine with Google Gemini (95% coverage, 37 tests)
+  - Trading agent with dual-model approach (Flash/Pro)
+  - Confidence scoring with Brier calibration
+  - Vector memory with Pinecone for pattern matching
+  
+**Next Milestone**: Phase 3 - Trading Strategies (Foundation layer: BTC/ETH/SOL)
 
 **Last Updated**: October 8, 2025

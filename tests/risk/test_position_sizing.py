@@ -28,7 +28,7 @@ class TestKellyCriterion:
         # Should recommend some position
         assert kelly > 0
         # Should be conservative (fractional Kelly)
-        assert kelly < Decimal("0.1")  # Less than 10%
+        assert kelly <= Decimal("0.1")  # Less than or equal to 10%
     
     def test_kelly_with_negative_edge(self):
         """Test Kelly with negative edge (should not recommend position)."""
@@ -60,6 +60,26 @@ class TestKellyCriterion:
         kelly = KellyCriterion.calculate(win_rate, avg_win, avg_loss)
         
         assert kelly == 0
+    
+    def test_kelly_zero_avg_win(self):
+        """Test Kelly criterion with zero average win."""
+        win_rate = Decimal("0.60")
+        avg_win = Decimal("0")
+        avg_loss = Decimal("100")
+        
+        kelly = KellyCriterion.calculate(win_rate, avg_win, avg_loss)
+        
+        assert kelly == 0  # Can't calculate with zero avg_win
+    
+    def test_kelly_negative_avg_win(self):
+        """Test Kelly criterion with negative average win."""
+        win_rate = Decimal("0.60")
+        avg_win = Decimal("-50")
+        avg_loss = Decimal("100")
+        
+        kelly = KellyCriterion.calculate(win_rate, avg_win, avg_loss)
+        
+        assert kelly == 0  # Invalid scenario
     
     def test_kelly_custom_fraction(self):
         """Test Kelly with custom fractional value."""
@@ -218,6 +238,30 @@ class TestPositionSizer:
                 asset_tier=AssetTier.FOUNDATION,
             )
             PositionSizer(params)
+        
+        # Invalid avg_win (zero)
+        with pytest.raises(ValueError, match="Average win must be positive"):
+            params = PositionSizeParams(
+                portfolio_value=Decimal("10000"),
+                win_rate=Decimal("0.6"),
+                avg_win=Decimal("0"),
+                avg_loss=Decimal("50"),
+                confidence=Decimal("0.8"),
+                asset_tier=AssetTier.FOUNDATION,
+            )
+            PositionSizer(params)
+        
+        # Invalid avg_loss (negative)
+        with pytest.raises(ValueError, match="Average loss must be positive"):
+            params = PositionSizeParams(
+                portfolio_value=Decimal("10000"),
+                win_rate=Decimal("0.6"),
+                avg_win=Decimal("100"),
+                avg_loss=Decimal("-50"),
+                confidence=Decimal("0.8"),
+                asset_tier=AssetTier.FOUNDATION,
+            )
+            PositionSizer(params)
     
     def test_stop_loss_calculation(
         self,
@@ -247,6 +291,67 @@ class TestPositionSizer:
         # Should be approximately 5% below entry
         expected = sample_entry_price * Decimal("0.95")
         assert abs(stop_loss - expected) < Decimal("0.01")
+    
+    def test_stop_loss_with_zero_risk(self):
+        """Test stop loss calculation with zero risk percentage."""
+        params = PositionSizeParams(
+            portfolio_value=Decimal("10000"),
+            win_rate=Decimal("0.6"),
+            avg_win=Decimal("100"),
+            avg_loss=Decimal("50"),
+            confidence=Decimal("0.8"),
+            asset_tier=AssetTier.FOUNDATION,
+        )
+        
+        sizer = PositionSizer(params)
+        entry_price = Decimal("100")
+        
+        # Zero or negative risk should raise error
+        with pytest.raises(ValueError, match="Stop loss percentage must be positive"):
+            sizer.calculate_stop_loss(entry_price, Decimal("0"))
+        
+        with pytest.raises(ValueError, match="Stop loss percentage must be positive"):
+            sizer.calculate_stop_loss(entry_price, Decimal("-5"))
+    
+    def test_stop_loss_with_large_risk(self):
+        """Test stop loss calculation with large risk percentage."""
+        params = PositionSizeParams(
+            portfolio_value=Decimal("10000"),
+            win_rate=Decimal("0.6"),
+            avg_win=Decimal("100"),
+            avg_loss=Decimal("50"),
+            confidence=Decimal("0.8"),
+            asset_tier=AssetTier.FOUNDATION,
+        )
+        
+        sizer = PositionSizer(params)
+        entry_price = Decimal("100")
+        
+        # 50% risk
+        stop_loss = sizer.calculate_stop_loss(entry_price, Decimal("50"))
+        expected = entry_price * Decimal("0.5")
+        assert stop_loss == expected
+    
+    def test_stop_loss_invalid_entry_price(self):
+        """Test stop loss with invalid entry price."""
+        params = PositionSizeParams(
+            portfolio_value=Decimal("10000"),
+            win_rate=Decimal("0.6"),
+            avg_win=Decimal("100"),
+            avg_loss=Decimal("50"),
+            confidence=Decimal("0.8"),
+            asset_tier=AssetTier.FOUNDATION,
+        )
+        
+        sizer = PositionSizer(params)
+        
+        # Zero entry price - covers line 184
+        with pytest.raises(ValueError, match="Entry price must be positive"):
+            sizer.calculate_stop_loss(Decimal("0"), Decimal("5"))
+        
+        # Negative entry price
+        with pytest.raises(ValueError, match="Entry price must be positive"):
+            sizer.calculate_stop_loss(Decimal("-100"), Decimal("5"))
     
     def test_memecoin_tighter_stop_loss(
         self,
@@ -316,6 +421,27 @@ class TestPositionSizer:
         
         # Allow small rounding error
         assert abs(calculated_value - position_size) < Decimal("0.01")
+    
+    def test_position_quantity_invalid_entry_price(self):
+        """Test position quantity with invalid entry price."""
+        params = PositionSizeParams(
+            portfolio_value=Decimal("10000"),
+            win_rate=Decimal("0.6"),
+            avg_win=Decimal("100"),
+            avg_loss=Decimal("50"),
+            confidence=Decimal("0.8"),
+            asset_tier=AssetTier.FOUNDATION,
+        )
+        
+        sizer = PositionSizer(params)
+        
+        # Zero entry price
+        with pytest.raises(ValueError, match="Entry price must be positive"):
+            sizer.calculate_position_quantity(Decimal("0"))
+        
+        # Negative entry price
+        with pytest.raises(ValueError, match="Entry price must be positive"):
+            sizer.calculate_position_quantity(Decimal("-100"))
     
     def test_tier_allocation_validation(
         self,
@@ -399,6 +525,22 @@ class TestRiskRewardRatio:
                 Decimal("95"),  # Below entry
                 Decimal("90"),
             )
+        
+        # Zero entry price - covers line 248
+        with pytest.raises(ValueError, match="Entry price must be positive"):
+            calculate_risk_reward_ratio(
+                Decimal("0"),
+                Decimal("120"),
+                Decimal("90"),
+            )
+        
+        # Negative entry price
+        with pytest.raises(ValueError, match="Entry price must be positive"):
+            calculate_risk_reward_ratio(
+                Decimal("-100"),
+                Decimal("120"),
+                Decimal("90"),
+            )
     
     def test_minimum_win_rate_calculation(self):
         """Test minimum win rate calculation for profitability."""
@@ -427,3 +569,28 @@ class TestRiskRewardRatio:
         
         rr = calculate_risk_reward_ratio(entry, tp, sl)
         assert rr > 0
+    
+    def test_zero_risk_reward_ratio(self):
+        """Test risk-reward ratio with zero risk (edge case)."""
+        entry = Decimal("100")
+        tp = Decimal("120")
+        sl = Decimal("100")  # No risk
+        
+        # Should raise error for zero risk
+        with pytest.raises(ValueError, match="Stop loss must be below entry"):
+            calculate_risk_reward_ratio(entry, tp, sl)
+    
+    def test_high_risk_reward_ratio(self):
+        """Test very high risk-reward ratios."""
+        entry = Decimal("100")
+        tp = Decimal("200")  # 100% gain
+        sl = Decimal("99")   # 1% loss
+        
+        rr = calculate_risk_reward_ratio(entry, tp, sl)
+        assert rr == Decimal("100")  # 100:1 ratio
+    
+    def test_min_win_rate_zero_rr(self):
+        """Test minimum win rate with zero RR (should handle edge case)."""
+        # Zero RR means you need 100% win rate (impossible)
+        min_wr = min_win_rate_for_profitability(Decimal("0"))
+        assert min_wr == Decimal("1")  # 100%

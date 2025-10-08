@@ -10,30 +10,49 @@ You've successfully scaffolded an AI crypto trading agent with **bulletproof ris
 - **Flexible Infrastructure** - Works with Podman, local installation, or no infrastructure
 - **Complete Documentation** - Everything you need to get started
 
-## 🚀 Quick Start (3 Steps)
+## 🚀 Quick Start (2 Steps)
 
 ### 1. Setup Environment
 ```bash
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# Automatic install (recommended)
+./install.sh
 
-# Install dependencies
+# This will:
+# - Create virtual environment
+# - Install all dependencies
+# - Install arbitra package in editable mode
+```
+
+**Or manually**:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
-pip install -e .
+pip install -e .  # IMPORTANT: Makes src package importable
 ```
 
 ### 2. Run Tests
 ```bash
-# Run the risk module tests (no infrastructure needed!)
-pytest tests/risk/ -v --cov=src/risk
+# Make sure venv is activated
+source venv/bin/activate  # If not already active
 
-# Or use the convenience script
+# Run the risk module tests (no infrastructure needed!)
 ./run_tests.sh
+
+# Or directly with pytest
+pytest tests/risk/ -v --cov=src/risk
 
 # Or use Make
 make test-risk
 ```
+
+**Note**: If you get "ModuleNotFoundError: No module named 'src'", run:
+```bash
+pip install -e .
+```
+
+See **TROUBLESHOOTING.md** for more help.
 
 ### 3. Explore the Code
 ```bash

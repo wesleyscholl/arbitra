@@ -19,14 +19,14 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-
 dependencies = [
     "python-dotenv>=1.0.0",
     "pydantic>=2.5.0",
-    "fastapi>=0.108.0",
-    "psycopg2-binary>=2.9.9",
-    "redis>=5.0.1",
 ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
 
 [project.optional-dependencies]
 dev = [

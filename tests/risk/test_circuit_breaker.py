@@ -77,6 +77,18 @@ class TestCircuitBreaker:
         assert not breaker.is_trading_allowed()
         assert BreakerType.WEEKLY_LOSS in breaker.get_active_breakers()
     
+    def test_weekly_loss_below_threshold(self, breaker):
+        """Test weekly loss when below threshold (doesn't trip)."""
+        start_value = Decimal("10000")
+        # 5% loss (below 10% threshold)
+        current_value = Decimal("9500")
+        
+        result = breaker.check_weekly_loss(current_value, start_value)
+        
+        # Should not trip - covers line 168
+        assert result is False
+        assert breaker.is_trading_allowed()
+    
     def test_drawdown_breaker(self, breaker):
         """Test drawdown breaker."""
         peak_value = Decimal("10000")
@@ -185,8 +197,8 @@ class TestCircuitBreaker:
         """Test that breaker resets after cooling period."""
         import time
         
-        # Trip breaker
-        custom_breaker.check_daily_loss(Decimal("9000"), Decimal("10000"))
+        # Trip breaker - 11% loss (exceeds 10% threshold)
+        custom_breaker.check_daily_loss(Decimal("8900"), Decimal("10000"))
         assert not custom_breaker.is_trading_allowed()
         
         # Wait for cooling period (1 minute in config, but we can't wait that long)
@@ -300,6 +312,135 @@ class TestCircuitBreaker:
         current_value = Decimal("9499")
         result = breaker.check_daily_loss(current_value, start_value)
         assert result is True
+
+
+class TestCircuitBreakerEdgeCases:
+    """Edge case tests for complete coverage."""
+    
+    def test_weekly_loss_disabled(self):
+        """Test weekly loss check when disabled."""
+        configs = {
+            BreakerType.WEEKLY_LOSS: BreakerConfig(
+                breaker_type=BreakerType.WEEKLY_LOSS,
+                threshold=Decimal("10.0"),
+                enabled=False,
+            ),
+        }
+        breaker = CircuitBreaker(configs)
+        
+        # Should not trip even with large loss
+        result = breaker.check_weekly_loss(Decimal("5000"), Decimal("10000"))
+        assert result is False
+    
+    def test_drawdown_disabled(self):
+        """Test drawdown check when disabled."""
+        configs = {
+            BreakerType.DRAWDOWN: BreakerConfig(
+                breaker_type=BreakerType.DRAWDOWN,
+                threshold=Decimal("15.0"),
+                enabled=False,
+            ),
+        }
+        breaker = CircuitBreaker(configs)
+        
+        # Should not trip even with large drawdown
+        result = breaker.check_drawdown(Decimal("5000"), Decimal("10000"))
+        assert result is False
+    
+    def test_volatility_disabled(self):
+        """Test volatility check when disabled."""
+        configs = {
+            BreakerType.VOLATILITY: BreakerConfig(
+                breaker_type=BreakerType.VOLATILITY,
+                threshold=Decimal("100.0"),
+                enabled=False,
+            ),
+        }
+        breaker = CircuitBreaker(configs)
+        
+        result = breaker.check_volatility(Decimal("200"))
+        assert result is False
+    
+    def test_liquidity_disabled(self):
+        """Test liquidity check when disabled."""
+        configs = {
+            BreakerType.LIQUIDITY: BreakerConfig(
+                breaker_type=BreakerType.LIQUIDITY,
+                threshold=Decimal("50000"),
+                enabled=False,
+            ),
+        }
+        breaker = CircuitBreaker(configs)
+        
+        result = breaker.check_liquidity(Decimal("10000"))
+        assert result is False
+    
+    def test_consecutive_losses_disabled(self):
+        """Test consecutive losses when disabled."""
+        configs = {
+            BreakerType.CONSECUTIVE_LOSSES: BreakerConfig(
+                breaker_type=BreakerType.CONSECUTIVE_LOSSES,
+                threshold=Decimal("3"),
+                enabled=False,
+            ),
+        }
+        breaker = CircuitBreaker(configs)
+        
+        # Record many losses
+        for _ in range(10):
+            result = breaker.record_trade_result(is_win=False)
+            assert result is False
+    
+    def test_api_failure_disabled(self):
+        """Test API failure when disabled."""
+        configs = {
+            BreakerType.API_FAILURE: BreakerConfig(
+                breaker_type=BreakerType.API_FAILURE,
+                threshold=Decimal("3"),
+                enabled=False,
+            ),
+        }
+        breaker = CircuitBreaker(configs)
+        
+        # Record many failures
+        for _ in range(10):
+            result = breaker.record_api_failure()
+            assert result is False
+    
+    def test_drawdown_below_threshold(self):
+        """Test drawdown check when below threshold (doesn't trip)."""
+        breaker = CircuitBreaker()
+        
+        # Small drawdown (5%) - should not trip (threshold is 15%)
+        result = breaker.check_drawdown(Decimal("9500"), Decimal("10000"))
+        assert result is False  # Cover line 190
+        assert breaker.is_trading_allowed()
+    
+    def test_volatility_below_threshold(self):
+        """Test volatility check when below threshold (doesn't trip)."""
+        breaker = CircuitBreaker()
+        
+        # Low volatility (50) - should not trip (threshold is 100)
+        result = breaker.check_volatility(Decimal("50"))
+        assert result is False  # Cover line 208
+        assert breaker.is_trading_allowed()
+    
+    def test_liquidity_above_threshold(self):
+        """Test liquidity check when above threshold (doesn't trip)."""
+        breaker = CircuitBreaker()
+        
+        # High liquidity - should not trip (threshold is 50000)
+        result = breaker.check_liquidity(Decimal("100000"))
+        assert result is False  # Cover line 226
+        assert breaker.is_trading_allowed()
+    
+    def test_cooling_period_expired_for_never_tripped(self):
+        """Test cooling period check for breaker that never tripped."""
+        breaker = CircuitBreaker()
+        
+        # For a breaker that was never tripped, cooling period is "expired"
+        # (trip_time is None, so it returns True on line 332)
+        assert breaker._is_cooling_period_expired(BreakerType.DAILY_LOSS)
 
 
 class TestBreakerIntegration:

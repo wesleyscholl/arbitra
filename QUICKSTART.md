@@ -12,12 +12,22 @@ Ensure you have:
 
 ### 2. Clone and Setup
 
+#### Option A: Automatic Install (Recommended)
+```bash
+# Navigate to project
+cd arbitra
+
+# Run the install script (creates venv, installs everything)
+./install.sh
+```
+
+#### Option B: Manual Install
 ```bash
 # Navigate to project
 cd arbitra
 
 # Create virtual environment
-python -m venv venv
+python3 -m venv venv
 
 # Activate virtual environment
 # On macOS/Linux:
@@ -26,12 +36,14 @@ source venv/bin/activate
 # venv\Scripts\activate
 
 # Install dependencies
-pip install --upgrade pip
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 
-# Install project in editable mode
+# Install project in editable mode (IMPORTANT!)
 pip install -e .
 ```
+
+**Important**: The `pip install -e .` step is crucial - it makes the `src` package importable.
 
 ### 3. Infrastructure Setup (Optional for Phase 1)
 
