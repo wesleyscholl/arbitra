@@ -27,15 +27,17 @@ app.add_middleware(
 
 # Mock data
 MOCK_PORTFOLIO = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
     "total_value": 52350.75,
     "cash": 12500.00,
     "total_pnl": 2350.75,
     "total_pnl_pct": 4.69,
     "daily_pnl": 450.25,
     "daily_pnl_pct": 0.87,
+    "updated_at": "2025-10-08T13:56:00Z",
     "positions": [
         {
-            "id": "1",
+            "id": "a50e8400-e29b-41d4-a716-446655440001",
             "symbol": "AAPL",
             "quantity": 50.0,
             "entry_price": 175.50,
@@ -43,13 +45,15 @@ MOCK_PORTFOLIO = {
             "current_value": 9115.00,
             "unrealized_pnl": 340.00,
             "unrealized_pnl_pct": 3.87,
-            "tier": "foundation",
+            "tier": "FOUNDATION",
+            "strategy": "momentum",
+            "confidence": 0.85,
             "stop_loss": 170.00,
             "take_profit": 190.00,
             "entry_time": "2024-01-15T10:30:00Z"
         },
         {
-            "id": "2",
+            "id": "a50e8400-e29b-41d4-a716-446655440002",
             "symbol": "MSFT",
             "quantity": 30.0,
             "entry_price": 380.25,
@@ -57,13 +61,15 @@ MOCK_PORTFOLIO = {
             "current_value": 11775.00,
             "unrealized_pnl": 367.50,
             "unrealized_pnl_pct": 3.22,
-            "tier": "foundation",
+            "tier": "FOUNDATION",
+            "strategy": "value",
+            "confidence": 0.78,
             "stop_loss": 365.00,
             "take_profit": None,
             "entry_time": "2024-01-14T14:20:00Z"
         },
         {
-            "id": "3",
+            "id": "a50e8400-e29b-41d4-a716-446655440003",
             "symbol": "NVDA",
             "quantity": 25.0,
             "entry_price": 485.00,
@@ -71,7 +77,9 @@ MOCK_PORTFOLIO = {
             "current_value": 13012.50,
             "unrealized_pnl": 887.50,
             "unrealized_pnl_pct": 7.32,
-            "tier": "growth",
+            "tier": "GROWTH",
+            "strategy": "growth",
+            "confidence": 0.92,
             "stop_loss": 470.00,
             "take_profit": 550.00,
             "entry_time": "2024-01-13T09:15:00Z"
@@ -83,7 +91,7 @@ MOCK_TRADES = [
     {
         "id": "1",
         "symbol": "TSLA",
-        "action": "buy",
+        "action": "BUY",
         "quantity": 20.0,
         "entry_price": 242.50,
         "exit_price": 255.80,
@@ -91,13 +99,17 @@ MOCK_TRADES = [
         "exit_time": "2024-01-12T15:30:00Z",
         "pnl": 266.00,
         "pnl_pct": 5.49,
+        "exit_reason": "take_profit",
+        "strategy": "momentum",
+        "confidence": 0.88,
+        "tier": "GROWTH",
         "fees": 2.00,
         "slippage": 1.50
     },
     {
         "id": "2",
         "symbol": "GOOGL",
-        "action": "buy",
+        "action": "BUY",
         "quantity": 15.0,
         "entry_price": 142.30,
         "exit_price": 138.90,
@@ -105,6 +117,10 @@ MOCK_TRADES = [
         "exit_time": "2024-01-11T16:45:00Z",
         "pnl": -51.00,
         "pnl_pct": -2.39,
+        "exit_reason": "stop_loss",
+        "strategy": "value",
+        "confidence": 0.65,
+        "tier": "FOUNDATION",
         "fees": 1.50,
         "slippage": 0.80
     }
@@ -115,6 +131,8 @@ MOCK_METRICS = {
     "winning_trades": 32,
     "losing_trades": 15,
     "win_rate": 68.09,
+    "average_win": 425.30,
+    "average_loss": -185.60,
     "avg_win": 425.30,
     "avg_loss": -185.60,
     "largest_win": 1250.75,
@@ -122,7 +140,9 @@ MOCK_METRICS = {
     "sharpe_ratio": 1.85,
     "max_drawdown": 8.3,
     "profit_factor": 2.29,
-    "risk_reward_ratio": 2.29
+    "risk_reward_ratio": 2.29,
+    "total_fees": 125.50,
+    "runtime_days": 45
 }
 
 # Request models

@@ -21,6 +21,15 @@ struct Portfolio: Codable, Identifiable {
     var positionValue: Decimal {
         positions.reduce(Decimal(0)) { $0 + $1.currentValue }
     }
+    
+    // Custom coding keys for acronyms that don't convert properly
+    enum CodingKeys: String, CodingKey {
+        case id, totalValue, cash, positions, updatedAt
+        case dailyPnL = "dailyPnl"
+        case dailyPnLPct = "dailyPnlPct"
+        case totalPnL = "totalPnl"
+        case totalPnLPct = "totalPnlPct"
+    }
 }
 
 struct Position: Codable, Identifiable {
@@ -44,6 +53,13 @@ struct Position: Codable, Identifiable {
     
     var costBasis: Decimal {
         entryPrice * quantity
+    }
+    
+    // Custom coding keys for acronyms that don't convert properly
+    enum CodingKeys: String, CodingKey {
+        case id, symbol, quantity, entryPrice, currentPrice, stopLoss, takeProfit, tier, strategy, confidence, entryTime
+        case unrealizedPnL = "unrealizedPnl"
+        case unrealizedPnLPct = "unrealizedPnlPct"
     }
 }
 
@@ -95,6 +111,12 @@ struct Trade: Codable, Identifiable {
         guard let exitTime = exitTime else { return nil }
         return exitTime.timeIntervalSince(entryTime)
     }
+    
+    // Custom coding keys for acronyms
+    enum CodingKeys: String, CodingKey {
+        case id, symbol, action, entryPrice, exitPrice, quantity, entryTime, exitTime, exitReason, strategy, confidence, tier, fees, slippage
+        case pnl, pnlPct // Note: lowercase since API sends lowercase
+    }
 }
 
 enum TradeAction: String, Codable {
@@ -119,4 +141,6 @@ struct PerformanceMetrics: Codable {
     let riskRewardRatio: Double
     let totalFees: Decimal
     let runtimeDays: Double
+    
+    // Note: avgWin and avgLoss will be decoded automatically from avg_win and avg_loss
 }

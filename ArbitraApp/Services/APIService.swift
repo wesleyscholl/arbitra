@@ -43,7 +43,7 @@ class APIService {
     }
     
     func fetchRecentTrades(limit: Int = 20) async throws -> [Trade] {
-        let url = try buildURL(endpoint: "/trades/history", queryItems: [
+        let url = try buildURL(endpoint: "/trades/recent", queryItems: [
             URLQueryItem(name: "limit", value: "\(limit)")
         ])
         return try await performRequest(url: url)

@@ -165,7 +165,7 @@ struct KeyMetricsView: View {
             
             MetricCard(
                 title: "Avg Win",
-                value: "$\(formatDecimal(metrics?.avgWin ?? 0))",
+                value: "$\(formatDecimal(metrics?.averageWin ?? 0))",
                 icon: "arrow.up.circle.fill",
                 color: .green
             )
@@ -301,8 +301,8 @@ struct TradeStatisticsView: View {
                 StatRow(label: "Winning Trades", value: "\(metrics?.winningTrades ?? 0)", color: .green)
                 StatRow(label: "Losing Trades", value: "\(metrics?.losingTrades ?? 0)", color: .red)
                 StatRow(label: "Win Rate", value: String(format: "%.1f%%", metrics?.winRate ?? 0))
-                StatRow(label: "Average Win", value: "$\(formatDecimal(metrics?.avgWin ?? 0))", color: .green)
-                StatRow(label: "Average Loss", value: "$\(formatDecimal(metrics?.avgLoss ?? 0))", color: .red)
+                StatRow(label: "Average Win", value: "$\(formatDecimal(metrics?.averageWin ?? 0))", color: .green)
+                StatRow(label: "Average Loss", value: "$\(formatDecimal(metrics?.averageLoss ?? 0))", color: .red)
                 StatRow(label: "Largest Win", value: "$\(formatDecimal(metrics?.largestWin ?? 0))", color: .green)
                 StatRow(label: "Largest Loss", value: "$\(formatDecimal(metrics?.largestLoss ?? 0))", color: .red)
             }

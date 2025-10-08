@@ -18,7 +18,8 @@ let package = Package(
         .executableTarget(
             name: "ArbitraApp",
             dependencies: [],
-            path: "ArbitraApp"
+            path: "ArbitraApp",
+            exclude: ["README.md"]
         )
     ]
 )

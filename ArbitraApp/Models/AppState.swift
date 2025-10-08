@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UserNotifications
 
 enum AppView {
     case dashboard
@@ -74,11 +75,32 @@ class AppState: ObservableObject {
     }
     
     private func sendNotification(_ message: String, type: AlertType) {
-        let notification = NSUserNotification()
-        notification.title = "Arbitra"
-        notification.informativeText = message
-        notification.soundName = type == .error ? NSUserNotificationDefaultSoundName : nil
+        let center = UNUserNotificationCenter.current()
         
-        NSUserNotificationCenter.default.deliver(notification)
+        // Request authorization if not already granted
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                let content = UNMutableNotificationContent()
+                content.title = "Arbitra"
+                content.body = message
+                
+                if type == .error {
+                    content.sound = .default
+                }
+                
+                // Create notification request
+                let request = UNNotificationRequest(
+                    identifier: UUID().uuidString,
+                    content: content,
+                    trigger: nil // Deliver immediately
+                )
+                
+                center.add(request) { error in
+                    if let error = error {
+                        print("Failed to deliver notification: \(error)")
+                    }
+                }
+            }
+        }
     }
 }

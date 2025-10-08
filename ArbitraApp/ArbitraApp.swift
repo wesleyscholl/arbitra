@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import AppKit
 
 @main
 struct ArbitraApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appState = AppState()
     @StateObject private var portfolioState = PortfolioState()
     @StateObject private var connectionState = ConnectionState()
@@ -22,8 +24,11 @@ struct ArbitraApp: App {
                 .frame(minWidth: 1200, minHeight: 800)
                 .onAppear {
                     setupAppearance()
+                    activateApp()
                 }
         }
+        .windowStyle(.automatic)
+        .defaultSize(width: 1400, height: 900)
         .commands {
             // File menu
             CommandGroup(replacing: .newItem) {}
@@ -101,6 +106,16 @@ struct ArbitraApp: App {
         if let window = NSApplication.shared.windows.first {
             window.titlebarAppearsTransparent = true
             window.toolbarStyle = .unified
+        }
+    }
+    
+    private func activateApp() {
+        // Activate the application and bring windows to front
+        NSApplication.shared.activate(ignoringOtherApps: true)
+        
+        // Make sure the window is visible and key
+        if let window = NSApplication.shared.windows.first {
+            window.makeKeyAndOrderFront(nil)
         }
     }
 }
