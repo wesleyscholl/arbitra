@@ -340,23 +340,90 @@ arbitra/
 - Even with 50% loss rate, net positive returns
 - HARD RULE: Never hold >72 hours
 
-### Phase 7: Monitoring & Optimization (Ongoing)
+### Phase 7: Paper Trading & Validation (Week 11-12)
+
+**Objective**: Validate system with realistic simulation before live trading
+
+#### Components:
+1. **Paper Trading Engine**
+   - Real market data with simulated execution
+   - Realistic slippage and fees
+   - Stop-loss and take-profit automation
+   - Comprehensive performance tracking
+
+2. **Performance Analytics**
+   - Win rate and profit factor
+   - Sharpe ratio and max drawdown
+   - Strategy comparison
+   - Risk metrics dashboard
+
+3. **Validation Framework**
+   - Minimum 2 weeks continuous operation
+   - Performance benchmarks
+   - System stability testing
+   - Trade-by-trade analysis
+
+#### Success Criteria:
+- Minimum 2 weeks paper trading
+- Win rate >55%
+- Max drawdown <10%
+- Sharpe ratio >1.2
+- System uptime >99%
+
+### Phase 8: Native macOS UI (Week 13-14)
+
+**Objective**: Build intuitive native macOS app for monitoring and control
+
+#### Components:
+1. **Dashboard**
+   - Real-time portfolio value
+   - Daily/total P/L
+   - Performance charts
+   - Position monitoring
+
+2. **Trade Management**
+   - View active positions
+   - Manual trade execution
+   - Trade history
+   - Performance analytics
+
+3. **System Control**
+   - Start/stop trading
+   - Emergency stop button
+   - Settings configuration
+   - Alert management
+
+#### Success Criteria:
+- Native Swift/SwiftUI implementation
+- <100ms response time
+- Real-time WebSocket updates
+- Full dark mode support
+- Keyboard shortcuts for power users
+
+### Phase 9: Monitoring & Optimization (Ongoing)
 
 **Objective**: Continuous improvement and monitoring
 
 #### Components:
-1. **Dashboard**
-   - Real-time P&L
-   - Strategy performance
-   - Risk metrics
-   - AI confidence tracking
+1. **Enhanced Monitoring**
+   - Real-time P/L tracking
+   - Strategy performance comparison
+   - Risk metrics dashboard
+   - AI confidence calibration
 
-2. **Backtesting Framework**
-   - Historical replay
-   - Strategy optimization
-   - Walk-forward analysis
+2. **Advanced Features**
+   - Multi-model consensus (Flash + Pro)
+   - Market regime detection
+   - Correlation-based limits
+   - Dynamic position sizing
 
-3. **Alerting**
+3. **Safety Enhancements**
+   - Portfolio rebalancing
+   - Sector concentration limits
+   - Time-based restrictions
+   - Recovery mode after losses
+
+4. **Alerting**
    - Circuit breaker triggers
    - Large losses
    - System errors
@@ -542,13 +609,21 @@ python main.py --mode live
 
 ## 📚 Documentation
 
+### Getting Started
 - **[Installation Guide](INSTALLATION.md)** - Detailed setup options (Podman, local, or no infrastructure)
 - **[Quick Start](QUICKSTART.md)** - Get up and running fast
+
+### Core Documentation
 - **[AI Engine](docs/AI_ENGINE.md)** - Google Gemini integration guide
 - **[Phase 2 Testing](docs/PHASE2_TESTING.md)** - Complete test results and coverage report
 - [Trading Strategies](docs/strategies.md)
 - [Risk Management](docs/risk-management.md)
 - [API Documentation](docs/api.md)
+
+### Enhancement Plans 🆕
+- **[Enhancement Summary](docs/ENHANCEMENT_SUMMARY.md)** - ⭐ START HERE - Complete overview of 30+ improvements
+- **[Full Enhancement Guide](docs/ENHANCEMENTS.md)** - Detailed implementation guide with code examples
+- **[Quick Enhancements](docs/QUICK_ENHANCEMENTS.md)** - TL;DR reference and quick wins
 
 ## ⚠️ Disclaimers
 
