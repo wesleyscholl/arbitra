@@ -20,6 +20,16 @@ wheels/
 .installed.cfg
 *.egg
 
+# Swift
+.build/
+.swiftpm/
+Packages/
+.xcworkspace/
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/
+*.xcodeproj/DerivedData/
+
 # Virtual Environment
 venv/
 env/
