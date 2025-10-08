@@ -1,0 +1,432 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.ArbitraApp-arm64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/sources",
+      "importPath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/ArbitraApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/AppState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/ConnectionState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/Portfolio.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/PortfolioState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Services/APIService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/DashboardView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/HistoryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/PerformanceView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/PositionsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "ArbitraApp",
+      "moduleOutputPath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/Modules/ArbitraApp.swiftmodule",
+      "objects" : [
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ArbitraApp.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/AppState.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ConnectionState.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/Portfolio.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PortfolioState.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/APIService.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ContentView.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/DashboardView.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/HistoryView.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PerformanceView.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PositionsView.swift.o",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/SettingsView.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx13.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "ArbitraApp_main",
+        "-color-diagnostics",
+        "-swift-version",
+        "5",
+        "-F",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "arbitra"
+      ],
+      "outputFileMapPath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ArbitraApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/AppState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ConnectionState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/Portfolio.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PortfolioState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/APIService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ContentView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/DashboardView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/HistoryView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PerformanceView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PositionsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/Modules/ArbitraApp.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/wscholl/arbitra/ArbitraApp/ArbitraApp.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Models/AppState.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Models/ConnectionState.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Models/Portfolio.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Models/PortfolioState.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Services/APIService.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Views/ContentView.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Views/DashboardView.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Views/HistoryView.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Views/PerformanceView.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Views/PositionsView.swift",
+        "/Users/wscholl/arbitra/ArbitraApp/Views/SettingsView.swift"
+      ],
+      "tempsPath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "ArbitraApp" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "ArbitraApp",
+      "-package-name",
+      "arbitra",
+      "-incremental",
+      "-c",
+      "/Users/wscholl/arbitra/ArbitraApp/ArbitraApp.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Models/AppState.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Models/ConnectionState.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Models/Portfolio.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Models/PortfolioState.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Services/APIService.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Views/ContentView.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Views/DashboardView.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Views/HistoryView.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Views/PerformanceView.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Views/PositionsView.swift",
+      "/Users/wscholl/arbitra/ArbitraApp/Views/SettingsView.swift",
+      "-I",
+      "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx13.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "ArbitraApp_main",
+      "-color-diagnostics",
+      "-swift-version",
+      "5",
+      "-F",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "arbitra",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "ArbitraApp" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "writeCommands" : {
+    "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp-entitlement.plist" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<entitlement-plist>"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<com.apple.security.get-task-allow>"
+        }
+      ],
+      "outputFilePath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp-entitlement.plist"
+    },
+    "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/ArbitraApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/AppState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/ConnectionState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/Portfolio.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Models/PortfolioState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Services/APIService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/DashboardView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/HistoryView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/PerformanceView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/PositionsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/ArbitraApp/Views/SettingsView.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/sources"
+    },
+    "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/APIService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/AppState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ArbitraApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ConnectionState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ContentView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/DashboardView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/HistoryView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PerformanceView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/Portfolio.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PortfolioState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PositionsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/SettingsView.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.product/Objects.LinkFileList"
+    },
+    "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+    }
+  }
+}

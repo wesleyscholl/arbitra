@@ -1,0 +1,77 @@
+{
+  "": {
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/master.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/ArbitraApp.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ArbitraApp.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ArbitraApp.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ArbitraApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ArbitraApp.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Models/AppState.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/AppState.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/AppState.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/AppState~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/AppState.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Models/ConnectionState.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ConnectionState.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ConnectionState.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ConnectionState~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ConnectionState.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Models/Portfolio.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/Portfolio.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/Portfolio.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/Portfolio~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/Portfolio.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Models/PortfolioState.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PortfolioState.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PortfolioState.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PortfolioState~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PortfolioState.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Services/APIService.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/APIService.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/APIService.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/APIService~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/APIService.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Views/ContentView.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ContentView.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ContentView.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ContentView~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/ContentView.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Views/DashboardView.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/DashboardView.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/DashboardView.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/DashboardView~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/DashboardView.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Views/HistoryView.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/HistoryView.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/HistoryView.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/HistoryView~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/HistoryView.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Views/PerformanceView.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PerformanceView.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PerformanceView.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PerformanceView~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PerformanceView.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Views/PositionsView.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PositionsView.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PositionsView.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PositionsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/PositionsView.swiftdeps"
+  },
+  "/Users/wscholl/arbitra/ArbitraApp/Views/SettingsView.swift": {
+    "dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/SettingsView.d",
+    "object": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/SettingsView.swift.o",
+    "swiftmodule": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/SettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/wscholl/arbitra/.build/arm64-apple-macosx/debug/ArbitraApp.build/SettingsView.swiftdeps"
+  }
+}

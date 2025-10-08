@@ -1,0 +1,12 @@
+/Users/wscholl/arbitra/ArbitraApp/ArbitraApp.swift
+/Users/wscholl/arbitra/ArbitraApp/Models/AppState.swift
+/Users/wscholl/arbitra/ArbitraApp/Models/ConnectionState.swift
+/Users/wscholl/arbitra/ArbitraApp/Models/Portfolio.swift
+/Users/wscholl/arbitra/ArbitraApp/Models/PortfolioState.swift
+/Users/wscholl/arbitra/ArbitraApp/Services/APIService.swift
+/Users/wscholl/arbitra/ArbitraApp/Views/ContentView.swift
+/Users/wscholl/arbitra/ArbitraApp/Views/DashboardView.swift
+/Users/wscholl/arbitra/ArbitraApp/Views/HistoryView.swift
+/Users/wscholl/arbitra/ArbitraApp/Views/PerformanceView.swift
+/Users/wscholl/arbitra/ArbitraApp/Views/PositionsView.swift
+/Users/wscholl/arbitra/ArbitraApp/Views/SettingsView.swift
