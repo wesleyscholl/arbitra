@@ -40,13 +40,21 @@ swift build -c release
 - Use `Cmd+Tab` or click the Dock icon
 - Check Activity Monitor for "ArbitraApp" process
 
-### Connection errors
-- Make sure the backend API is running: `python api_stub.py`
+### Connection errors  
+- Make sure the backend API is running: `./start-server.sh`
 - Backend should be at `http://localhost:8000`
+- WebSocket endpoint is at `ws://localhost:8000/ws/market-data`
+
+### First time running or after API changes
+The app caches old API URLs in UserDefaults. To reset:
+1. Open the app
+2. Go to Settings (gear icon in sidebar)
+3. Scroll down and click "Reset to Defaults"
+4. Restart the app
 
 ### Decoding errors
 - Restart both the backend and the app
-- Check that api_stub.py has the latest changes
+- Make sure you've reset settings to defaults (see above)
 
 ## What's Working
 

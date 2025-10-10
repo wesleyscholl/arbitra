@@ -1,6 +1,10 @@
 #!/bin/bash
 # Build and run Arbitra macOS app
 
+#  Navigate to the project directory if not already there
+cd "$(dirname "$0")"
+
+# Build the Swift app
 echo "🔨 Building Arbitra..."
 swift build
 

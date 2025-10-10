@@ -50,10 +50,12 @@ We chose Google Gemini over Anthropic Claude and OpenAI GPT for several reasons:
 
 ### 1. Get API Keys
 
-#### Google Gemini API
-1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Click "Get API Key"
-3. Copy your API key
+#### API Key (OpenRouter / Gemini)
+1. Prefer using an OpenRouter-compatible API key. Set the environment variable
+    `OPEN_ROUTER_API_KEY` with your provider key.
+2. If you are still using Google Gemini directly you can set `GEMINI_API_KEY` as
+    a backward-compatible fallback; the code will use `OPEN_ROUTER_API_KEY` first
+    and fall back to `GEMINI_API_KEY` when necessary.
 
 #### Pinecone
 1. Sign up at [Pinecone](https://www.pinecone.io/)
@@ -69,7 +71,12 @@ cp config/ai.env.example config/ai.env
 
 Edit `config/ai.env` with your API keys:
 ```bash
-GEMINI_API_KEY=your_actual_gemini_api_key
+OPEN_ROUTER_API_KEY=your_actual_open_router_api_key
+PINECONE_API_KEY=your_actual_pinecone_key
+PINECONE_ENVIRONMENT=us-west-2-aws
+
+# (optional) legacy Google Gemini key
+# GEMINI_API_KEY=your_actual_gemini_api_key
 PINECONE_API_KEY=your_actual_pinecone_key
 PINECONE_ENVIRONMENT=us-west-2-aws
 ```
@@ -368,7 +375,7 @@ Solution: `pip install google-generativeai`
 ```
 google.api_core.exceptions.PermissionDenied: API key not valid
 ```
-Solution: Check your `GEMINI_API_KEY` in `config/ai.env`
+Solution: Check your `OPEN_ROUTER_API_KEY` (or `GEMINI_API_KEY` fallback) in `config/ai.env`
 
 ### Pinecone Connection Error
 ```

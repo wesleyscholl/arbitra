@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     @AppStorage("apiBaseURL") private var apiBaseURL = "http://localhost:8000"
-    @AppStorage("wsBaseURL") private var wsBaseURL = "ws://localhost:8000/ws"
+    @AppStorage("wsBaseURL") private var wsBaseURL = "ws://localhost:8000/ws/market-data"
     @AppStorage("refreshInterval") private var refreshInterval = 5
     @AppStorage("showNotifications") private var showNotifications = true
     @AppStorage("notificationSound") private var notificationSound = true
@@ -191,7 +191,7 @@ struct SettingsView: View {
     
     private func resetToDefaults() {
         apiBaseURL = "http://localhost:8000"
-        wsBaseURL = "ws://localhost:8000/ws"
+        wsBaseURL = "ws://localhost:8000/ws/market-data"
         refreshInterval = 5
         showNotifications = true
         notificationSound = true

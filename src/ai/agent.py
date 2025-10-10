@@ -13,6 +13,7 @@ from enum import Enum
 from typing import Dict, List, Optional
 
 import google.generativeai as genai
+from src.utils.ai_keys import get_ai_api_key
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -77,16 +78,20 @@ class TradingAgent:
     - gemini-1.5-pro: Deep analysis for complex market conditions
     """
     
-    def __init__(self, api_key: str, config: Optional[ModelConfig] = None):
+    def __init__(self, api_key: Optional[str] = None, config: Optional[ModelConfig] = None):
         """
         Initialize the trading agent.
         
         Args:
-            api_key: Google AI API key
+            api_key: AI provider API key. If None, will read from the
+                     OPEN_ROUTER_API_KEY environment variable, falling back
+                     to GEMINI_API_KEY for backward compatibility.
             config: Model configuration
         """
         self.config = config or ModelConfig()
-        genai.configure(api_key=api_key)
+        # Prefer explicit argument, otherwise load from environment
+        key = api_key or get_ai_api_key()
+        genai.configure(api_key=key)
         
         # Initialize models
         self.flash_model = genai.GenerativeModel(self.config.flash_model)

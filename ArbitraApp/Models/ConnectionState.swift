@@ -15,7 +15,7 @@ class ConnectionState: ObservableObject {
     @Published var lastUpdateTime: Date?
     
     private var webSocket: URLSessionWebSocketTask?
-    private let baseURL = "ws://localhost:8000/ws"
+    private let baseURL = "ws://localhost:8000/ws/market-data"
     
     init() {
         connect()

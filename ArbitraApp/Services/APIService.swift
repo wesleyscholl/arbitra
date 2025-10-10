@@ -38,20 +38,56 @@ class APIService {
     // MARK: - Portfolio
     
     func fetchPortfolio() async throws -> Portfolio {
-        let url = try buildURL(endpoint: "/portfolio")
-        return try await performRequest(url: url)
+        // Fetch account info
+        let accountURL = try buildURL(endpoint: "/trading/account")
+        let accountResponse: AccountResponse = try await performRequest(url: accountURL)
+        
+        // Fetch positions
+        let positionsURL = try buildURL(endpoint: "/trading/positions")
+        let positionsResponse: PositionsListResponse = try await performRequest(url: positionsURL)
+        
+        // Convert positions
+        let positions = positionsResponse.positions.map { $0.toPosition() }
+        
+        // Convert to Portfolio
+        return accountResponse.toPortfolio(positions: positions)
     }
     
     func fetchRecentTrades(limit: Int = 20) async throws -> [Trade] {
-        let url = try buildURL(endpoint: "/trades/recent", queryItems: [
+        let url = try buildURL(endpoint: "/trading/trades", queryItems: [
             URLQueryItem(name: "limit", value: "\(limit)")
         ])
-        return try await performRequest(url: url)
+        let response: TradesListResponse = try await performRequest(url: url)
+        
+        // Convert trades
+        return response.trades.map { $0.toTrade() }
     }
     
     func fetchPerformanceMetrics() async throws -> PerformanceMetrics {
-        let url = try buildURL(endpoint: "/performance/metrics")
-        return try await performRequest(url: url)
+        // Use account endpoint to get performance data
+        let url = try buildURL(endpoint: "/trading/account")
+        let accountResponse: AccountResponse = try await performRequest(url: url)
+        
+        // Convert to PerformanceMetrics model
+        // Note: Most fields are not available from the account endpoint yet
+        return PerformanceMetrics(
+            totalTrades: accountResponse.tradeCount,
+            winningTrades: 0, // Not available yet
+            losingTrades: 0, // Not available yet
+            winRate: 0, // Not available yet
+            profitFactor: 0, // Not available yet
+            sharpeRatio: 0, // Not available yet
+            maxDrawdown: 0, // Not available yet
+            averageWin: 0,
+            averageLoss: 0,
+            avgWin: 0,
+            avgLoss: 0,
+            largestWin: 0,
+            largestLoss: 0,
+            riskRewardRatio: 0,
+            totalFees: 0,
+            runtimeDays: 0
+        )
     }
     
     // MARK: - Trading Control
