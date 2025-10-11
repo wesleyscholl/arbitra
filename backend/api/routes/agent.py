@@ -13,7 +13,10 @@ router = APIRouter()
 class AgentConfig(BaseModel):
     """Agent configuration model."""
 
-    watchlist: list[str] = ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA"]
+    watchlist: list[str] = [
+        "AAPL", "GOOGL", "MSFT", "AMZN", "TSLA",  # Stocks
+        "BTC/USD", "ETH/USD", "SOL/USD", "DOGE/USD"  # Crypto
+    ]
     scan_interval: int = 300  # seconds
     signal_threshold: float = 0.65
     max_positions: int = 5

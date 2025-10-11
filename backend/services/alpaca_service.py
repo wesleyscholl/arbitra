@@ -44,12 +44,13 @@ def patched_session_init(self, *args, **kwargs):
 
 requests.Session.__init__ = patched_session_init
 
-from alpaca.data.historical import StockHistoricalDataClient
-from alpaca.data.live import StockDataStream
+from alpaca.data.historical import StockHistoricalDataClient, CryptoHistoricalDataClient
+from alpaca.data.live import StockDataStream, CryptoDataStream
 from alpaca.data.requests import (
     StockLatestQuoteRequest,
     StockBarsRequest,
-    StockQuotesRequest,
+    CryptoLatestQuoteRequest,
+    CryptoBarsRequest,
 )
 from alpaca.data.timeframe import TimeFrame
 from alpaca.trading.client import TradingClient
@@ -59,12 +60,26 @@ from alpaca.trading.enums import AssetClass
 logger = logging.getLogger(__name__)
 
 
+def is_crypto_symbol(symbol: str) -> bool:
+    """
+    Determine if a symbol is cryptocurrency based on format.
+    
+    Args:
+        symbol: Symbol to check (e.g., 'BTC/USD', 'AAPL')
+    
+    Returns:
+        True if crypto, False if stock
+    """
+    # Crypto symbols typically contain a slash (BTC/USD, ETH/USD)
+    return '/' in symbol
+
+
 class AlpacaMarketDataService:
-    """Service for fetching market data from Alpaca."""
+    """Service for fetching market data (stocks & crypto) from Alpaca."""
 
     def __init__(self, api_key: str, secret_key: str, paper: bool = True):
         """
-        Initialize Alpaca market data service.
+        Initialize Alpaca market data service for both stocks and crypto.
 
         Args:
             api_key: Alpaca API key
@@ -75,44 +90,65 @@ class AlpacaMarketDataService:
         self.secret_key = secret_key
         self.paper = paper
 
-        # Historical data client (no auth needed for data)
-        self.data_client = StockHistoricalDataClient(api_key, secret_key)
+        # Stock historical data client
+        self.stock_data_client = StockHistoricalDataClient(api_key, secret_key)
+        
+        # Crypto historical data client
+        self.crypto_data_client = CryptoHistoricalDataClient(api_key, secret_key)
 
         # Trading client for account info
         self.trading_client = TradingClient(
             api_key, secret_key, paper=paper
         )
 
-        # Live data stream
-        self.stream: Optional[StockDataStream] = None
+        # Live data streams (stocks and crypto separate)
+        self.stock_stream: Optional[StockDataStream] = None
+        self.crypto_stream: Optional[CryptoDataStream] = None
         self._stream_handlers: Dict[str, List] = {}
 
-        logger.info(f"AlpacaMarketDataService initialized (paper={paper})")
+        logger.info(f"AlpacaMarketDataService initialized for STOCKS & CRYPTO (paper={paper})")
 
     async def get_latest_quote(self, symbol: str) -> Dict[str, Any]:
         """
-        Get the latest quote for a symbol.
+        Get the latest quote for a symbol (stock or crypto).
 
         Args:
-            symbol: Stock symbol (e.g., 'AAPL')
+            symbol: Stock symbol (e.g., 'AAPL') or crypto pair (e.g., 'BTC/USD')
 
         Returns:
             Dict with bid/ask prices and sizes
         """
         try:
-            request = StockLatestQuoteRequest(symbol_or_symbols=symbol)
-            quotes = self.data_client.get_stock_latest_quote(request)
-
-            quote = quotes[symbol]
-
-            return {
-                "symbol": symbol,
-                "bid_price": float(quote.bid_price),
-                "bid_size": int(quote.bid_size),
-                "ask_price": float(quote.ask_price),
-                "ask_size": int(quote.ask_size),
-                "timestamp": quote.timestamp.isoformat(),
-            }
+            if is_crypto_symbol(symbol):
+                # Crypto quote
+                request = CryptoLatestQuoteRequest(symbol_or_symbols=symbol)
+                quotes = self.crypto_data_client.get_crypto_latest_quote(request)
+                quote = quotes[symbol]
+                
+                return {
+                    "symbol": symbol,
+                    "bid_price": float(quote.bid_price),
+                    "bid_size": float(quote.bid_size),  # Crypto can have fractional sizes
+                    "ask_price": float(quote.ask_price),
+                    "ask_size": float(quote.ask_size),  # Crypto can have fractional sizes
+                    "timestamp": quote.timestamp.isoformat(),
+                    "asset_type": "crypto"
+                }
+            else:
+                # Stock quote
+                request = StockLatestQuoteRequest(symbol_or_symbols=symbol)
+                quotes = self.stock_data_client.get_stock_latest_quote(request)
+                quote = quotes[symbol]
+                
+                return {
+                    "symbol": symbol,
+                    "bid_price": float(quote.bid_price),
+                    "bid_size": int(quote.bid_size),
+                    "ask_price": float(quote.ask_price),
+                    "ask_size": int(quote.ask_size),
+                    "timestamp": quote.timestamp.isoformat(),
+                    "asset_type": "stock"
+                }
 
         except Exception as e:
             logger.error(f"Error fetching quote for {symbol}: {e}")
@@ -127,10 +163,10 @@ class AlpacaMarketDataService:
         limit: int = 100,
     ) -> List[Dict[str, Any]]:
         """
-        Get historical bars for a symbol.
+        Get historical bars for a symbol (stock or crypto).
 
         Args:
-            symbol: Stock symbol
+            symbol: Stock symbol (e.g., 'AAPL') or crypto pair (e.g., 'BTC/USD')
             timeframe: Bar timeframe (1Min, 5Min, 15Min, 1Hour, 1Day)
             start: Start datetime (default: 24 hours ago)
             end: End datetime (default: now)
@@ -157,30 +193,58 @@ class AlpacaMarketDataService:
             if not end:
                 end = datetime.now()
 
-            request = StockBarsRequest(
-                symbol_or_symbols=symbol,
-                timeframe=tf,
-                start=start,
-                end=end,
-                limit=limit,
-            )
-
-            bars = self.data_client.get_stock_bars(request)
-
             result = []
-            for bar in bars[symbol]:
-                result.append(
-                    {
-                        "timestamp": bar.timestamp.isoformat(),
-                        "open": float(bar.open),
-                        "high": float(bar.high),
-                        "low": float(bar.low),
-                        "close": float(bar.close),
-                        "volume": int(bar.volume),
-                        "vwap": float(bar.vwap) if bar.vwap else None,
-                        "trade_count": bar.trade_count,
-                    }
+            
+            if is_crypto_symbol(symbol):
+                # Crypto bars
+                request = CryptoBarsRequest(
+                    symbol_or_symbols=symbol,
+                    timeframe=tf,
+                    start=start,
+                    end=end,
+                    limit=limit,
                 )
+                bars = self.crypto_data_client.get_crypto_bars(request)
+                
+                for bar in bars[symbol]:
+                    result.append(
+                        {
+                            "timestamp": bar.timestamp.isoformat(),
+                            "open": float(bar.open),
+                            "high": float(bar.high),
+                            "low": float(bar.low),
+                            "close": float(bar.close),
+                            "volume": float(bar.volume),  # Crypto can have fractional volume
+                            "vwap": float(bar.vwap) if bar.vwap else None,
+                            "trade_count": bar.trade_count,
+                            "asset_type": "crypto"
+                        }
+                    )
+            else:
+                # Stock bars
+                request = StockBarsRequest(
+                    symbol_or_symbols=symbol,
+                    timeframe=tf,
+                    start=start,
+                    end=end,
+                    limit=limit,
+                )
+                bars = self.stock_data_client.get_stock_bars(request)
+                
+                for bar in bars[symbol]:
+                    result.append(
+                        {
+                            "timestamp": bar.timestamp.isoformat(),
+                            "open": float(bar.open),
+                            "high": float(bar.high),
+                            "low": float(bar.low),
+                            "close": float(bar.close),
+                            "volume": int(bar.volume),
+                            "vwap": float(bar.vwap) if bar.vwap else None,
+                            "trade_count": bar.trade_count,
+                            "asset_type": "stock"
+                        }
+                    )
 
             logger.info(f"Fetched {len(result)} bars for {symbol}")
             return result

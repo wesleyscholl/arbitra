@@ -15,6 +15,7 @@ import json
 
 import httpx
 from dotenv import load_dotenv
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -54,19 +55,26 @@ class TradingAgent:
         self.openrouter_api_key = openrouter_api_key
         self.model = model
 
-        # Agent configuration
-        self.watchlist = ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA"]
-        self.scan_interval = 300  # 5 minutes
-        self.signal_threshold = 0.65  # Minimum confidence to act
-        self.max_position_size = Decimal("10000")  # Max $10k per position
-        self.max_positions = 5
+        # Agent configuration - mixed watchlist of stocks and crypto
+        self.watchlist = [
+            # Stocks
+            # "AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "NVDA", "META", "NFLX", "INTC", "AMD", "PYPL", "ADBE", "CSCO", "CRM", "ORCL", "IBM", "QCOM", "TXN", "AVGO", "AMAT", "NOW", "INTU", "LRCX", "FISV", "ADP", "MU", "BKNG", "ZM", "DOCU", "SNOW", "SPOT", "TWTR", "UBER", "LYFT", "PINS", "SQ", "WORK", "TEAM", "FSLY", "CRWD", "OKTA", "ZS", "DDOG", "NET", "PLTR", "ROKU", "ETSY", "BIDU",
+            # Crypto
+            "BTC/USD", "ETH/USD", "SOL/USD", "DOGE/USD", "LTC/USD", "ADA/USD", "AVAX/USD", "MATIC/USD", "SHIB/USD", "BNB/USD", "LINK/USD"
+        ]
+
+        # Read from env or use defaults
+        self.scan_interval = int(os.getenv("AI_SCAN_INTERVAL", 120))  # 2 minutes
+        self.signal_threshold = float(os.getenv("AI_SIGNAL_THRESHOLD", 0.7))  # Minimum confidence to act
+        self.max_position_size = Decimal(os.getenv("AI_MAX_POSITION_SIZE", "10000"))  # Max $10k per position
+        self.max_positions = int(os.getenv("AI_MAX_POSITIONS", 10))  # Max 10 concurrent positions
 
         # State
         self.running = False
         self.last_scan_time = None
         self.signal_history: List[Dict] = []
 
-        logger.info(f"Trading agent initialized with model: {model}")
+        logger.info(f"Trading agent initialized with model: {model} (stocks & crypto)")
 
     async def start(self):
         """Start the trading agent."""
@@ -200,10 +208,15 @@ class TradingAgent:
                 else 0
             )
 
-            # Create AI prompt
-            prompt = f"""You are an expert trading algorithm. Analyze this market data and provide a trading signal.
+            # Determine asset type for context
+            asset_type = quote.get('asset_type', 'stock')
+            asset_label = "Cryptocurrency" if asset_type == 'crypto' else "Stock"
+            unit_label = "coins" if asset_type == 'crypto' else "shares"
+            
+            # Create AI prompt with asset-aware context
+            prompt = f"""You are an expert trading algorithm. Analyze this {asset_label.lower()} market data and provide a trading signal.
 
-Symbol: {symbol}
+{asset_label}: {symbol}
 Current Price: ${current_price:.2f}
 Bid/Ask: ${quote['bid_price']:.2f} / ${quote['ask_price']:.2f}
 
@@ -223,7 +236,7 @@ Respond in JSON format:
   "signal": "BUY" | "SELL" | "HOLD",
   "confidence": 0.0-1.0,
   "reasoning": "Brief explanation of your decision",
-  "target_size": "shares to trade (integer)"
+  "target_size": "{unit_label} to trade (integer or decimal)"
 }}
 
 Consider:
@@ -231,6 +244,8 @@ Consider:
 - Momentum (recent price changes)
 - Volume patterns
 - Risk/reward ratio
+{"- High volatility typical of crypto markets" if asset_type == 'crypto' else "- Market hours and traditional trading patterns"}
+{"- 24/7 trading availability" if asset_type == 'crypto' else ""}
 
 Be conservative - only suggest BUY with high confidence."""
 
@@ -254,28 +269,82 @@ Be conservative - only suggest BUY with high confidence."""
                         "max_tokens": 500,
                     },
                 )
-
+            # Check response status and log body on error
             if response.status_code != 200:
-                logger.error(f"OpenRouter API error: {response.status_code}")
+                # Log response body for debugging
+                try:
+                    text = response.text
+                except Exception:
+                    text = "(unable to read response body)"
+
+                logger.error(
+                    f"OpenRouter API error: {response.status_code} - response body: {text}"
+                )
                 return self._fallback_signal(symbol, current_price)
 
             # Parse AI response
             result = response.json()
-            ai_response = result["choices"][0]["message"]["content"]
-
-            # Extract JSON from response
+            # Expecting chat-like structure; be defensive
             try:
-                # Try to find JSON in the response
+                ai_response = result["choices"][0]["message"]["content"]
+            except Exception:
+                # Fallback: stringify full result
+                ai_response = json.dumps(result)
+
+            # Extract JSON from response robustly and map common key names
+            try:
+                # First attempt: naive bracket matching
                 start = ai_response.find("{")
                 end = ai_response.rfind("}") + 1
-                ai_signal = json.loads(ai_response[start:end])
+                json_text = ai_response[start:end] if start != -1 and end != -1 else None
+
+                ai_signal = None
+                if json_text:
+                    try:
+                        ai_signal = json.loads(json_text)
+                    except json.JSONDecodeError:
+                        ai_signal = None
+
+                # If naive parse failed, try regex extraction (DOTALL)
+                if ai_signal is None:
+                    m = re.search(r"\{.*\}", ai_response, re.DOTALL)
+                    if m:
+                        try:
+                            ai_signal = json.loads(m.group(0))
+                        except json.JSONDecodeError:
+                            ai_signal = None
+
+                if not ai_signal:
+                    raise ValueError("Could not extract JSON from AI response")
+
+                # Flexible key mapping to tolerate different model outputs
+                signal_raw = ai_signal.get("signal") or ai_signal.get("signal_type") or ai_signal.get("action")
+                confidence_raw = ai_signal.get("confidence") or ai_signal.get("score") or ai_signal.get("confidence_score")
+                reasoning_raw = ai_signal.get("reasoning") or ai_signal.get("explanation") or ai_signal.get("reason") or ""
+                target_size_raw = ai_signal.get("target_size") or ai_signal.get("size") or ai_signal.get("quantity") or 0
+
+                # Normalize values
+                signal_type_norm = str(signal_raw).lower() if signal_raw else "hold"
+                try:
+                    confidence_norm = float(confidence_raw)
+                except Exception:
+                    confidence_norm = 0.0
+
+                try:
+                    # Allow decimals for crypto "coins" sizes
+                    if isinstance(target_size_raw, (int, float)):
+                        target_size_norm = float(target_size_raw)
+                    else:
+                        target_size_norm = float(str(target_size_raw))
+                except Exception:
+                    target_size_norm = 0
 
                 return {
                     "symbol": symbol,
-                    "signal_type": ai_signal["signal"].lower(),
-                    "confidence": float(ai_signal["confidence"]),
-                    "reasoning": ai_signal["reasoning"],
-                    "target_size": int(ai_signal.get("target_size", 10)),
+                    "signal_type": signal_type_norm,
+                    "confidence": confidence_norm,
+                    "reasoning": reasoning_raw,
+                    "target_size": target_size_norm,
                     "current_price": current_price,
                     "timestamp": datetime.now().isoformat(),
                     "model": self.model,
@@ -287,9 +356,10 @@ Be conservative - only suggest BUY with high confidence."""
                     },
                 }
 
-            except (json.JSONDecodeError, KeyError) as e:
+            except Exception as e:
                 logger.error(f"Error parsing AI response: {e}")
-                logger.debug(f"AI Response: {ai_response}")
+                # Log the full AI response for debugging
+                logger.debug(f"AI Response raw: {ai_response}")
                 return self._fallback_signal(symbol, current_price)
 
         except Exception as e:

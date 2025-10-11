@@ -132,24 +132,36 @@ async def get_position(symbol: str):
 
 
 # Market Data Endpoints
-@router.get("/quote/{symbol}")
+@router.get("/quote/{symbol:path}")
 async def get_quote(symbol: str):
-    """Get the latest quote for a symbol."""
+    """
+    Get the latest quote for a symbol (stock or crypto).
+    
+    For crypto, use format: BTC/USD, ETH/USD, etc.
+    For stocks, use format: AAPL, GOOGL, etc.
+    """
     try:
         alpaca = get_alpaca_service()
-        quote = await alpaca.get_latest_quote(symbol.upper())
+        # Don't uppercase crypto symbols (they contain /)
+        quote_symbol = symbol if '/' in symbol else symbol.upper()
+        quote = await alpaca.get_latest_quote(quote_symbol)
         return quote
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/bars/{symbol}")
+@router.get("/bars/{symbol:path}")
 async def get_bars(
     symbol: str,
     timeframe: str = Query(default="5Min", description="Bar timeframe"),
     limit: int = Query(default=100, ge=1, le=1000, description="Number of bars"),
 ):
-    """Get historical bars for a symbol."""
+    """
+    Get historical bars for a symbol (stock or crypto).
+    
+    For crypto, use format: BTC/USD, ETH/USD, etc.
+    For stocks, use format: AAPL, GOOGL, etc.
+    """
     try:
         alpaca = get_alpaca_service()
 
@@ -157,15 +169,18 @@ async def get_bars(
         end = datetime.now()
         start = end - timedelta(days=1)
 
+        # Don't uppercase crypto symbols (they contain /)
+        bar_symbol = symbol if '/' in symbol else symbol.upper()
+
         bars = await alpaca.get_bars(
-            symbol=symbol.upper(),
+            symbol=bar_symbol,
             timeframe=timeframe,
             start=start,
             end=end,
             limit=limit,
         )
 
-        return {"symbol": symbol.upper(), "timeframe": timeframe, "bars": bars}
+        return {"symbol": bar_symbol, "timeframe": timeframe, "bars": bars}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
