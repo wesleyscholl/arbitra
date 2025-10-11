@@ -37,10 +37,8 @@ async def start_agent():
         if agent.running:
             return {"message": "Agent already running", "status": "running"}
 
-        # Start agent in background
-        import asyncio
-
-        asyncio.create_task(agent.start())
+        # Start agent (it will handle background task internally)
+        await agent.start()
 
         return {
             "message": "Trading agent started",
@@ -128,6 +126,33 @@ async def get_agent_config():
             "signal_threshold": agent.signal_threshold,
             "max_positions": agent.max_positions,
             "max_position_size": float(agent.max_position_size),
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/watchlist")
+async def get_watchlist():
+    """Get agent watchlist."""
+    try:
+        agent = get_agent()
+        return {"symbols": agent.watchlist}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/watchlist")
+async def update_watchlist(symbols: list[str]):
+    """Update agent watchlist."""
+    try:
+        agent = get_agent()
+        agent.watchlist = symbols
+
+        return {
+            "message": "Watchlist updated",
+            "symbols": agent.watchlist,
         }
 
     except Exception as e:

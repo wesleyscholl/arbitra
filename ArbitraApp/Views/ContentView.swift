@@ -53,6 +53,8 @@ struct ContentView: View {
             HistoryView()
         case .performance:
             PerformanceView()
+        case .aiTrading:
+            AITradingView()
         case .settings:
             SettingsView()
         }
@@ -81,6 +83,12 @@ struct SidebarView: View {
             Section("Analytics") {
                 NavigationLink(value: AppView.performance) {
                     Label("Performance", systemImage: "chart.bar.xaxis")
+                }
+            }
+            
+            Section("AI Agent") {
+                NavigationLink(value: AppView.aiTrading) {
+                    Label("AI Trading", systemImage: "brain")
                 }
             }
             

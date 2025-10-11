@@ -14,6 +14,7 @@ enum AppView {
     case positions
     case history
     case performance
+    case aiTrading
     case settings
 }
 

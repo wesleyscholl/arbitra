@@ -37,6 +37,13 @@ struct SettingsView: View {
                     Text("1 minute").tag(60)
                 }
                 .help("How often to refresh portfolio data")
+                
+                Divider()
+                
+                Button(action: openAITradingView) {
+                    Label("Configure AI Trading", systemImage: "brain")
+                }
+                .help("Open AI trading agent configuration")
             }
             
             // API settings
@@ -201,6 +208,10 @@ struct SettingsView: View {
         theme = "system"
         
         appState.showAlert("All settings have been reset to defaults", type: .success)
+    }
+    
+    private func openAITradingView() {
+        appState.selectedView = .aiTrading
     }
 }
 

@@ -88,8 +88,8 @@ class TradingAgent:
         except:
             pass
 
-        # Start main loop
-        await self._main_loop()
+        # Start main loop in background task (don't await it)
+        asyncio.create_task(self._main_loop())
 
     async def stop(self):
         """Stop the trading agent."""
