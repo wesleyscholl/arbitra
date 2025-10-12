@@ -2,7 +2,7 @@
 AI Trading Agent Service
 
 Automated trading agent that generates signals and executes paper trades 24/7.
-Uses OpenRouter API for signal generation based on market data.
+Uses multi-provider AI: Gemini -> HuggingFace -> Ollama (fallback chain).
 """
 
 import asyncio
@@ -17,6 +17,8 @@ import httpx
 from dotenv import load_dotenv
 import re
 
+from backend.services.ai_service import AIService
+
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -26,7 +28,7 @@ class TradingAgent:
     """
     Autonomous trading agent that:
     1. Monitors market data
-    2. Generates AI signals via OpenRouter
+    2. Generates AI signals via multi-provider AI service
     3. Executes paper trades
     4. Manages positions
     """
@@ -36,8 +38,7 @@ class TradingAgent:
         alpaca_service,
         paper_engine,
         websocket_manager,
-        openrouter_api_key: str,
-        model: str = "anthropic/claude-3.5-sonnet",
+        ai_service: AIService,
     ):
         """
         Initialize trading agent.
@@ -46,14 +47,12 @@ class TradingAgent:
             alpaca_service: Alpaca market data service
             paper_engine: Paper trading engine
             websocket_manager: WebSocket manager for broadcasting
-            openrouter_api_key: OpenRouter API key
-            model: AI model to use for signal generation
+            ai_service: Multi-provider AI service
         """
         self.alpaca = alpaca_service
         self.engine = paper_engine
         self.ws_manager = websocket_manager
-        self.openrouter_api_key = openrouter_api_key
-        self.model = model
+        self.ai_service = ai_service
 
         # Agent configuration - mixed watchlist of stocks and crypto
         self.watchlist = [
@@ -73,8 +72,11 @@ class TradingAgent:
         self.running = False
         self.last_scan_time = None
         self.signal_history: List[Dict] = []
+        
+        # Track AI provider usage stats
+        self.ai_stats = {"gemini": 0, "huggingface": 0, "ollama": 0, "failures": 0}
 
-        logger.info(f"Trading agent initialized with model: {model} (stocks & crypto)")
+        logger.info(f"Trading agent initialized with multi-provider AI (stocks & crypto)")
 
     async def start(self):
         """Start the trading agent."""
@@ -249,47 +251,21 @@ Consider:
 
 Be conservative - only suggest BUY with high confidence."""
 
-            # Call OpenRouter API
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.post(
-                    "https://openrouter.ai/api/v1/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {self.openrouter_api_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "model": self.model,
-                        "messages": [
-                            {
-                                "role": "user",
-                                "content": prompt,
-                            }
-                        ],
-                        "temperature": 0.3,  # Lower temperature for more consistent signals
-                        "max_tokens": 500,
-                    },
-                )
-            # Check response status and log body on error
-            if response.status_code != 200:
-                # Log response body for debugging
-                try:
-                    text = response.text
-                except Exception:
-                    text = "(unable to read response body)"
-
-                logger.error(
-                    f"OpenRouter API error: {response.status_code} - response body: {text}"
-                )
+            # Call multi-provider AI service (Gemini -> HuggingFace -> Ollama)
+            ai_result = await self.ai_service.generate_trading_signal(prompt, timeout=30.0)
+            
+            if not ai_result["success"]:
+                logger.error(f"All AI providers failed for {symbol}")
+                self.ai_stats["failures"] += 1
                 return self._fallback_signal(symbol, current_price)
-
-            # Parse AI response
-            result = response.json()
-            # Expecting chat-like structure; be defensive
-            try:
-                ai_response = result["choices"][0]["message"]["content"]
-            except Exception:
-                # Fallback: stringify full result
-                ai_response = json.dumps(result)
+            
+            # Track which provider was used
+            provider = ai_result["provider"]
+            self.ai_stats[provider] = self.ai_stats.get(provider, 0) + 1
+            logger.info(f"Using {provider} for {symbol} signal generation")
+            
+            # Get the AI response content
+            ai_response = ai_result["content"]
 
             # Extract JSON from response robustly and map common key names
             try:
@@ -336,6 +312,10 @@ Be conservative - only suggest BUY with high confidence."""
                         target_size_norm = float(target_size_raw)
                     else:
                         target_size_norm = float(str(target_size_raw))
+                    
+                    # Enforce minimum target size to prevent invalid trades
+                    if target_size_norm > 0 and target_size_norm < 0.01:
+                        target_size_norm = 0.01
                 except Exception:
                     target_size_norm = 0
 
@@ -347,7 +327,7 @@ Be conservative - only suggest BUY with high confidence."""
                     "target_size": target_size_norm,
                     "current_price": current_price,
                     "timestamp": datetime.now().isoformat(),
-                    "model": self.model,
+                    "model": f"{provider}/{ai_result['model']}",
                     "indicators": {
                         "sma_5": sma_5,
                         "sma_20": sma_20,
@@ -400,12 +380,23 @@ Be conservative - only suggest BUY with high confidence."""
 
         try:
             if signal_type == "buy":
-                # Calculate position size (don't exceed max)
+                # Validate inputs
                 current_price = Decimal(str(signal["current_price"]))
-                position_value = current_price * Decimal(str(target_size))
+                if current_price <= 0:
+                    logger.warning(f"Invalid price for {symbol}: {current_price}")
+                    return
+                
+                if target_size <= 0:
+                    logger.warning(f"Invalid target size for {symbol}: {target_size}")
+                    return
+                
+                # Calculate position size (don't exceed max)
+                target_size_decimal = Decimal(str(target_size))
+                position_value = current_price * target_size_decimal
 
                 if position_value > self.max_position_size:
-                    target_size = int(self.max_position_size / current_price)
+                    target_size_decimal = self.max_position_size / current_price
+                    target_size = float(target_size_decimal)
 
                 # Check if we have enough cash
                 account = self.engine.get_account_info()
@@ -417,7 +408,7 @@ Be conservative - only suggest BUY with high confidence."""
                 order = self.engine.submit_order(
                     symbol=symbol,
                     side="buy",
-                    quantity=Decimal(str(target_size)),
+                    quantity=target_size_decimal,
                     order_type="market",
                 )
 
@@ -491,6 +482,8 @@ Be conservative - only suggest BUY with high confidence."""
             if self.last_scan_time
             else None,
             "total_signals": len(self.signal_history),
+            "ai_providers": self.ai_service.get_status(),
+            "ai_usage_stats": self.ai_stats,
         }
 
     def get_recent_signals(self, limit: int = 10) -> List[Dict]:

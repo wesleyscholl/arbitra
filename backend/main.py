@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from backend.services.alpaca_service import AlpacaMarketDataService
+from backend.services.ai_service import AIService
 from backend.services.trading_agent import TradingAgent
 from backend.trading.paper_trading_engine import PaperTradingEngine
 from backend.api.routes import trading, websocket as ws_routes, agent as agent_routes
@@ -78,18 +79,31 @@ async def lifespan(app: FastAPI):
     # Initialize WebSocket manager
     websocket_manager = ws_routes.ConnectionManager()
 
+    # Initialize AI service with multiple providers
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    huggingface_key = os.getenv("HUGGINGFACE_API_KEY")
+    ollama_key = os.getenv("OLLAMA_API_KEY")
+    ollama_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    
+    ai_service = AIService(
+        gemini_api_key=gemini_key,
+        huggingface_api_key=huggingface_key,
+        ollama_api_key=ollama_key,
+        ollama_base_url=ollama_url,
+    )
+    logger.info("AI service initialized with multi-provider support")
+    
     # Initialize trading agent
-    openrouter_key = os.getenv("OPENROUTER_API_KEY")
-    if openrouter_key:
+    if gemini_key or huggingface_key or ollama_url:
         trading_agent = TradingAgent(
             alpaca_service=alpaca_service,
             paper_engine=paper_engine,
             websocket_manager=websocket_manager,
-            openrouter_api_key=openrouter_key,
+            ai_service=ai_service,
         )
-        logger.info("Trading agent initialized")
+        logger.info("Trading agent initialized with multi-provider AI")
     else:
-        logger.warning("OPENROUTER_API_KEY not set - agent will not be available")
+        logger.warning("No AI providers configured - agent will not be available")
 
     logger.info("Arbitra backend started successfully")
 

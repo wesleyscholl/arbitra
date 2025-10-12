@@ -47,7 +47,7 @@ class Position:
     @property
     def unrealized_plpc(self) -> Decimal:
         """Unrealized P&L percentage."""
-        if self.entry_price == 0:
+        if self.entry_price == 0 or self.cost_basis == 0 or self.quantity == 0:
             return Decimal("0")
         return (self.unrealized_pl / self.cost_basis) * 100
 
@@ -447,7 +447,7 @@ class PaperTradingEngine:
 
     def get_positions(self) -> List[Dict]:
         """Get all current positions."""
-        return [pos.to_dict() for pos in self.positions.values()]
+        return [pos.to_dict() for pos in self.positions.values() if pos.quantity > 0]
 
     def get_position(self, symbol: str) -> Optional[Dict]:
         """Get a specific position."""
