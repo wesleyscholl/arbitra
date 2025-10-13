@@ -215,8 +215,13 @@ class AITradingService {
             throw AITradingError.serverError("HTTP \(httpResponse.statusCode)")
         }
         
-        // Response parsing
-        _ = try decoder.decode([String: AIAgentConfig].self, from: data)
+        // Response parsing: expect { "message": "...", "config": { ... } }
+        struct ConfigResponse: Codable {
+            let message: String
+            let config: AIAgentConfig
+        }
+
+        let _ = try decoder.decode(ConfigResponse.self, from: data)
     }
     
     // MARK: - Helper Methods

@@ -126,6 +126,28 @@ class AITradingViewModel: ObservableObject {
         updatedWatchlist.removeAll { $0 == symbol }
         updateWatchlist(updatedWatchlist)
     }
+
+    // MARK: - Configuration
+
+    func updateAgentConfig(_ config: AIAgentConfig) {
+        isLoading = true
+        errorMessage = nil
+
+        Task {
+            do {
+                try await AITradingService.shared.updateAgentConfig(config)
+                await MainActor.run {
+                    self.isLoading = false
+                    self.refreshStatus()
+                }
+            } catch {
+                await MainActor.run {
+                    self.isLoading = false
+                    self.errorMessage = "Failed to update config: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
     
     private func updateWatchlist(_ symbols: [String]) {
         Task {

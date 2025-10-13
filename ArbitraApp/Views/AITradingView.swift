@@ -10,6 +10,7 @@ import SwiftUI
 struct AITradingView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var viewModel = AITradingViewModel()
+    @State private var showConfigSheet = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -115,6 +116,9 @@ struct AITradingView: View {
         }
         .onDisappear {
             viewModel.stopPolling()
+        }
+        .sheet(isPresented: $showConfigSheet) {
+            ConfigEditor(viewModel: viewModel, isPresented: $showConfigSheet)
         }
     }
     
@@ -353,6 +357,7 @@ struct AIWatchlistPanel: View {
     @ObservedObject var viewModel: AITradingViewModel
     @State private var newSymbol = ""
     @State private var isEditing = false
+    // removed local sheet state – top-level view controls the config sheet
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -441,12 +446,24 @@ struct WatchlistSymbolChip: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .background(Color.blue.opacity(0.15))
+        .background(chipBackground)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                .stroke(chipBorder, lineWidth: 1)
         )
+    }
+
+    private var isCrypto: Bool {
+        return symbol.uppercased().contains("/") || symbol.uppercased().contains("USD")
+    }
+
+    private var chipBackground: Color {
+        isCrypto ? Color.purple.opacity(0.12) : Color.green.opacity(0.12)
+    }
+
+    private var chipBorder: Color {
+        isCrypto ? Color.purple.opacity(0.25) : Color.green.opacity(0.25)
     }
 }
 
@@ -590,5 +607,109 @@ struct AITradingView_Previews: PreviewProvider {
         AITradingView()
             .environmentObject(AppState())
             .frame(width: 800, height: 600)
+    }
+}
+
+// MARK: - Config Editor Sheet
+
+struct ConfigEditor: View {
+    @ObservedObject var viewModel: AITradingViewModel
+    @Binding var isPresented: Bool
+
+    @State private var scanInterval: String = ""
+    @State private var signalThreshold: String = ""
+    @State private var maxPositions: String = ""
+    @State private var maxPositionSize: String = ""
+    @State private var watchlistPreview: String = ""
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("Configure AI Agent")
+                .font(.title2)
+                .fontWeight(.bold)
+
+            Form {
+                HStack {
+                    Text("Scan Interval (s)")
+                    Spacer()
+                    TextField("", text: $scanInterval)
+                        .frame(width: 80)
+                        .multilineTextAlignment(.trailing)
+                }
+
+                HStack {
+                    Text("Signal Threshold")
+                    Spacer()
+                    TextField("0.7", text: $signalThreshold)
+                        .frame(width: 80)
+                        .multilineTextAlignment(.trailing)
+                }
+
+                HStack {
+                    Text("Max Positions")
+                    Spacer()
+                    TextField("", text: $maxPositions)
+                        .frame(width: 80)
+                        .multilineTextAlignment(.trailing)
+                }
+
+                HStack {
+                    Text("Max Position Size")
+                    Spacer()
+                    TextField("", text: $maxPositionSize)
+                        .frame(width: 120)
+                        .multilineTextAlignment(.trailing)
+                }
+
+                VStack(alignment: .leading) {
+                    Text("Watchlist Preview")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    TextEditor(text: $watchlistPreview)
+                        .frame(height: 100)
+                        .font(.caption)
+                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.2)))
+                }
+            }
+
+            HStack(spacing: 12) {
+                Button("Cancel") {
+                    isPresented = false
+                }
+                .keyboardShortcut(.cancelAction)
+
+                Spacer()
+
+                Button("Save") {
+                    saveConfig()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+            .padding(.horizontal)
+        }
+        .padding()
+        .frame(width: 600, height: 420)
+        .onAppear(perform: loadFromViewModel)
+    }
+
+    private func loadFromViewModel() {
+        guard let s = viewModel.agentStatus else { return }
+        scanInterval = "\(s.scanInterval)"
+        signalThreshold = String(format: "%.2f", s.signalThreshold)
+        maxPositions = "\(s.maxPositions)"
+        maxPositionSize = String(format: "%.2f", s.maxPositionSize)
+        watchlistPreview = s.watchlist.joined(separator: ", ")
+    }
+
+    private func saveConfig() {
+        guard let scan = Int(scanInterval), let threshold = Double(signalThreshold), let maxPos = Int(maxPositions), let maxSize = Double(maxPositionSize) else {
+            return
+        }
+
+        let config = AIAgentConfig(watchlist: watchlistPreview.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }, scanInterval: scan, signalThreshold: threshold, maxPositions: maxPos, maxPositionSize: maxSize)
+
+        viewModel.updateAgentConfig(config)
+        isPresented = false
     }
 }

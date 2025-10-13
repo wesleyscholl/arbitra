@@ -57,9 +57,19 @@ class TradingAgent:
         # Agent configuration - mixed watchlist of stocks and crypto
         self.watchlist = [
             # Stocks
-            # "AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "NVDA", "META", "NFLX", "INTC", "AMD", "PYPL", "ADBE", "CSCO", "CRM", "ORCL", "IBM", "QCOM", "TXN", "AVGO", "AMAT", "NOW", "INTU", "LRCX", "FISV", "ADP", "MU", "BKNG", "ZM", "DOCU", "SNOW", "SPOT", "TWTR", "UBER", "LYFT", "PINS", "SQ", "WORK", "TEAM", "FSLY", "CRWD", "OKTA", "ZS", "DDOG", "NET", "PLTR", "ROKU", "ETSY", "BIDU",
+            "AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "NVDA", "META", "NFLX", "INTC", "AMD", "PYPL", "ADBE", "CSCO", "CRM", "ORCL", "IBM", "QCOM", "TXN", "AVGO", "AMAT", "NOW", "INTU", "LRCX", "FISV", "ADP", "MU", "BKNG", "ZM", "DOCU", "SNOW", "SPOT", "TWTR", "UBER", "LYFT", "PINS", "SQ", "WORK", "TEAM", "FSLY", "CRWD", "OKTA", "ZS", "DDOG", "NET", "PLTR", "ROKU", "ETSY", "BIDU",
             # Crypto
-            "BTC/USD", "ETH/USD", "SOL/USD", "DOGE/USD", "LTC/USD", "ADA/USD", "AVAX/USD", "MATIC/USD", "SHIB/USD", "BNB/USD", "LINK/USD"
+            "BTC/USD", "ETH/USD", "SOL/USD", "DOGE/USD", "LTC/USD", "ADA/USD", "AVAX/USD", "MATIC/USD", "SHIB/USD", "BNB/USD", 
+            "LINK/USD", "XRP/USD", "DOT/USD", "UNI/USD", "ATOM/USD", "FIL/USD", "TRX/USD", "EOS/USD", "AAVE/USD", "MKR/USD", 
+            "SNX/USD", "COMP/USD", "YFI/USD", "SUSHI/USD", "CRV/USD", "1INCH/USD", "GRT/USD", "CEL/USD", "KNC/USD", "ZRX/USD", 
+            "BAT/USD", "DASH/USD", "XLM/USD", "XTZ/USD", "NEO/USD", "VET/USD", "ALGO/USD", "FTM/USD", "CRO/USD", "EGLD/USD", 
+            "CHZ/USD", "ENJ/USD", "MANA/USD", "AXS/USD", "SAND/USD", "THETA/USD", "IOTA/USD", "XMR/USD", "ZEC/USD", "DCR/USD", 
+            "QTUM/USD", "BTG/USD", "DGB/USD", "SC/USD", "RVN/USD", "KAVA/USD", "RUNE/USD", "HNT/USD", "CELO/USD", "STX/USD", 
+            "XEC/USD", "LUNA/USD", "UST/USD", "FTT/USD", "APE/USD", "SUI/USD", "ARB/USD", "OP/USD", "LDO/USD", "ENS/USD", 
+            "GALA/USD", "KSM/USD", "XCN/USD", "GLMR/USD", "CSPR/USD", "XDC/USD", "MINA/USD", "ICX/USD", "WAVES/USD", "DENT/USD", 
+            "HOT/USD", "CHSB/USD", "STORJ/USD", "ANKR/USD", "NEXO/USD", "RLY/USD", "SXP/USD", "BAL/USD", "SRM/USD", "OCEAN/USD", 
+            "LRC/USD", "UMA/USD", "BNT/USD", "REN/USD"
+
         ]
 
         # Read from env or use defaults

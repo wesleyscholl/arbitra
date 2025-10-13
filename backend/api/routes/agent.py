@@ -4,8 +4,9 @@ Trading Agent API Routes
 Endpoints for controlling the AI trading agent.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 from pydantic import BaseModel
+from decimal import Decimal
 
 router = APIRouter()
 
@@ -96,23 +97,68 @@ async def get_recent_signals(limit: int = 20):
 
 
 @router.post("/config")
-async def update_agent_config(config: AgentConfig):
-    """Update agent configuration."""
+async def update_agent_config(config: dict = Body(...)):
+    """Update agent configuration.
+
+    Accepts a flexible payload where `watchlist` may be a list of symbols or a
+    comma-separated string. Symbols will be deduplicated (order-preserving,
+    case-insensitive). Numeric fields are coerced to the expected types.
+    """
     try:
         agent = get_agent()
 
-        # Update configuration
-        agent.watchlist = config.watchlist
-        agent.scan_interval = config.scan_interval
-        agent.signal_threshold = config.signal_threshold
-        agent.max_positions = config.max_positions
-        agent.max_position_size = config.max_position_size
+        # Parse and normalize watchlist
+        raw_watchlist = config.get("watchlist", agent.watchlist)
+        if isinstance(raw_watchlist, str):
+            symbols = [s.strip() for s in raw_watchlist.split(",") if s.strip()]
+        elif isinstance(raw_watchlist, list):
+            symbols = [str(s).strip() for s in raw_watchlist if str(s).strip()]
+        else:
+            raise HTTPException(status_code=400, detail="watchlist must be a list or comma-separated string")
+
+        # Order-preserving, case-insensitive dedupe
+        seen = set()
+        deduped = []
+        for s in symbols:
+            k = s.upper()
+            if k in seen:
+                continue
+            seen.add(k)
+            deduped.append(s)
+
+        agent.watchlist = deduped
+
+        # Coerce other numeric/config fields if present
+        if "scan_interval" in config:
+            agent.scan_interval = int(config["scan_interval"])
+
+        if "signal_threshold" in config:
+            agent.signal_threshold = float(config["signal_threshold"])
+
+        if "max_positions" in config:
+            agent.max_positions = int(config["max_positions"])
+
+        if "max_position_size" in config:
+            # Keep max_position_size as Decimal internally to avoid float/Decimal
+            # comparison issues elsewhere in the agent.
+            try:
+                agent.max_position_size = Decimal(str(config["max_position_size"]))
+            except Exception:
+                raise HTTPException(status_code=400, detail="max_position_size must be numeric")
 
         return {
             "message": "Agent configuration updated",
-            "config": config.dict(),
+            "config": {
+                "watchlist": agent.watchlist,
+                "scan_interval": agent.scan_interval,
+                "signal_threshold": agent.signal_threshold,
+                "max_positions": agent.max_positions,
+                "max_position_size": float(agent.max_position_size),
+            },
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -147,16 +193,62 @@ async def get_watchlist():
 
 
 @router.post("/watchlist")
-async def update_watchlist(symbols: list[str]):
-    """Update agent watchlist."""
+async def update_watchlist(body=Body(...)):
+    """Update agent watchlist.
+
+    Accepts these body shapes:
+    - JSON list: ["AAPL", "GOOGL"]
+    - JSON string: "AAPL, GOOGL"
+    - JSON object: {"symbols": [...]} 
+    """
     try:
         agent = get_agent()
-        agent.watchlist = symbols
+
+        # Normalize input into a list of symbol strings
+        items = []
+        if isinstance(body, dict):
+            # Support { "symbols": [...] } or { "watchlist": [...] }
+            if "symbols" in body:
+                raw = body["symbols"]
+            elif "watchlist" in body:
+                raw = body["watchlist"]
+            else:
+                # Might be a single-key payload where the key is the symbol
+                raw = body
+
+            if isinstance(raw, str):
+                items = [s.strip() for s in raw.split(",") if s.strip()]
+            elif isinstance(raw, list):
+                items = [str(s).strip() for s in raw if str(s).strip()]
+            else:
+                # Fallback: try to coerce all dict values to strings
+                items = [str(v).strip() for v in raw.values()] if isinstance(raw, dict) else []
+
+        elif isinstance(body, str):
+            items = [s.strip() for s in body.split(",") if s.strip()]
+        elif isinstance(body, list):
+            items = [str(s).strip() for s in body if str(s).strip()]
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported payload for watchlist")
+
+        # Deduplicate (order-preserving, case-insensitive)
+        seen = set()
+        deduped = []
+        for s in items:
+            k = s.upper()
+            if k in seen:
+                continue
+            seen.add(k)
+            deduped.append(s)
+
+        agent.watchlist = deduped
 
         return {
             "message": "Watchlist updated",
             "symbols": agent.watchlist,
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
