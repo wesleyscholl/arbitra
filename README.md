@@ -656,3 +656,51 @@ MIT License - see [LICENSE](LICENSE)
 **Next Milestone**: Phase 3 - Trading Strategies (Foundation layer: BTC/ETH/SOL)
 
 **Last Updated**: October 8, 2025
+
+## 🗺️ Detailed Roadmap
+
+### Phase 3: Trading Strategies (Current)
+- 🔄 Foundation layer implementation (BTC, ETH, SOL)
+- 🔄 Strategy backtesting framework
+- 🔄 Paper trading mode
+- 🔄 Performance metrics and reporting
+
+### Phase 4: Execution System
+- 📋 Jupiter aggregator integration
+- 📋 Wallet management and security
+- 📋 Transaction monitoring and logging
+- 📋 Slippage and MEV protection
+
+### Phase 5: Data Pipeline
+- 📋 Real-time price feeds (Helius, Birdeye, DexScreener)
+- 📋 On-chain analytics integration
+- 📋 Market sentiment analysis
+- 📋 Historical data management
+
+### Phase 6: Production Deployment
+- 📋 Live trading with small capital
+- 📋 Monitoring and alerting (Grafana, Prometheus)
+- 📋 Database integration (PostgreSQL, Redis)
+- 📋 API endpoints for monitoring
+
+### Phase 7: Advanced Features
+- 📋 Multi-strategy portfolio optimization
+- 📋 Automated rebalancing
+- 📋 Social trading features
+- 📋 Advanced risk analytics
+
+## 🎯 Success Metrics
+
+- **Capital Preservation:** Max 2% loss per trade, <10% monthly drawdown
+- **Returns:** Target 8-15% monthly with Sharpe ratio >1.5
+- **Win Rate:** >55% profitable trades
+- **Uptime:** >99% system availability
+- **Response Time:** <100ms trade execution
+
+## ⚠️ Important Disclaimers
+
+- **Not Financial Advice:** This is an educational/research project
+- **High Risk:** Crypto trading carries significant risk of loss
+- **Use at Your Own Risk:** No guarantees of profitability
+- **Start Small:** Test with capital you can afford to lose
+- **Regulatory Compliance:** Ensure compliance with local laws
