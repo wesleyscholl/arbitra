@@ -5,6 +5,18 @@ All notable changes to Arbitra will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025-01-05]
+
+### Fixed
+- **Dependencies**: Updated pinecone package from deprecated `pinecone-client` to official `pinecone` package
+- **Testing**: Installed missing `hypothesis` package for property-based testing
+
+### Test Coverage Status
+- **Current Coverage**: 95% (702/738 lines covered) ✅
+- **Test Suite**: 126 tests (125 passing)
+- **Modules at 100% Coverage**: circuit_breaker.py, position_sizing.py
+- **High Coverage Modules**: agent.py (96%), paper_trading.py (96%), confidence.py (95%)
+
 ## [Unreleased]
 
 ### Phase 3: Multi-Strategy Framework (In Progress)
