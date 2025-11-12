@@ -1,5 +1,7 @@
 # Arbitra - AI Crypto Trading Agent
 
+**Status**: Advanced algorithmic trading system with AI-powered market analysis - enterprise-grade risk management and capital preservation focus.
+
 > A capital-preserving AI trading agent focused on steady, consistent returns through multi-tier asset allocation and robust risk management.
 
 ## 🎯 Project Goals
